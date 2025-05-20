@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'pages/passenger_home.dart';
+import 'pages/passenger_view_listing.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp();
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginScreen(),
         '/passenger_home': (context) => const PassengerHomePage(),
+        '/passenger_view_listing': (context) => const PassengerViewListing(),
       },
     );
   }

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
 
   const BottomNavBar({
-    Key? key,
     required this.currentIndex,
-  }) : super(key: key);
+  });
 
   void _navigateToPassengerHome(BuildContext context) {
     Navigator.pushNamed(context, '/passenger_home');
+  }
+
+  void _navigateToPassengerViewListing(BuildContext context) {
+    Navigator.pushNamed(context, '/passenger_view_listing');
   }
 
   @override
@@ -17,35 +21,58 @@ class BottomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.white,
       selectedItemColor: const Color(0xFFFF8C00),
       unselectedItemColor: Colors.grey,
-      items: const [
+      selectedFontSize: 12,
+      unselectedFontSize: 12,
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+          icon: _buildIcon(Icons.home, currentIndex == 0),
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.list),
+          icon: _buildIcon(Icons.list, currentIndex == 1),
           label: 'Listing',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.directions_car),
+          icon: _buildIcon(Icons.directions_car, currentIndex == 2),
           label: 'Ride',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.chat),
+          icon: _buildIcon(Icons.chat_bubble_outline, currentIndex == 3),
           label: 'Chats',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.article),
+          icon: _buildIcon(Icons.article_outlined, currentIndex == 4),
           label: 'Activity',
         ),
       ],
       onTap: (index) {
-        if (index == 0) {
-          _navigateToPassengerHome(context);
+        switch (index) {
+          case 0:
+            _navigateToPassengerHome(context);
+            break;
+          case 1:
+            _navigateToPassengerViewListing(context);
+            break;
         }
       },
+    );
+  }
+
+  Widget _buildIcon(IconData icon, bool isSelected) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: isSelected ? const Color(0xFFFF8C00) : Colors.grey[300],
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        icon,
+        color: isSelected ? Colors.white : Colors.grey[600],
+        size: 20,
+      ),
     );
   }
 }
