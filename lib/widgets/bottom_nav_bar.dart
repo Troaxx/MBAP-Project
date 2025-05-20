@@ -8,6 +8,10 @@ class BottomNavBar extends StatelessWidget {
     required this.currentIndex,
   }) : super(key: key);
 
+  void _navigateToPassengerHome(BuildContext context) {
+    Navigator.pushNamed(context, '/passenger_home');
+  }
+
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
@@ -38,7 +42,9 @@ class BottomNavBar extends StatelessWidget {
         ),
       ],
       onTap: (index) {
-        // Handle navigation
+        if (index == 0) {
+          _navigateToPassengerHome(context);
+        }
       },
     );
   }
