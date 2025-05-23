@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import '../pages/driver_home.dart';
 
 class ProfileDrawer extends StatelessWidget {
-  final String userName;
-  final String rating;
   final VoidCallback? onProfileTap;
   final VoidCallback? onHistoryTap;
   final VoidCallback? onSettingsTap;
   final VoidCallback? onLogoutTap;
 
   const ProfileDrawer({
-    required this.userName,
-    this.rating = '4.0',
     this.onProfileTap,
     this.onHistoryTap,
     this.onSettingsTap,
@@ -41,33 +37,21 @@ class ProfileDrawer extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  userName,
-                  style: const TextStyle(
+                const Text(
+                  'Marie Tan',
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 5),
-                Row(
-                  children: [
-                    const Text(
-                      '★ ★ ★ ★',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      rating,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
+                const Text(
+                  '+65 91234567',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
                 ),
               ],
             ),

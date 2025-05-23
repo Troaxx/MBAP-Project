@@ -13,8 +13,6 @@ class PassengerHomePage extends StatelessWidget {
       key: scaffoldKey,
       backgroundColor: const Color(0xFFFF8C00),
       endDrawer: ProfileDrawer(
-        userName: 'Marie Tan',
-        rating: '4.0',
         onProfileTap: () {
           // Navigate to profile page
         },
@@ -60,7 +58,7 @@ class PassengerHomePage extends StatelessWidget {
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            Text(
+                            const Text(
                               'Where should we go today?',
                               style: TextStyle(
                                 color: Colors.white,
@@ -249,7 +247,9 @@ class PassengerHomePage extends StatelessWidget {
                             const Icon(Icons.chevron_right),
                           ],
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, '/passenger_ride_history');
+                        },
                       ),
                     ),
                     const Spacer(),

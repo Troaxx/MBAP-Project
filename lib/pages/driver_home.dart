@@ -53,8 +53,6 @@ class _DriverHomePageState extends State<DriverHomePage> {
       key: scaffoldKey,
       backgroundColor: const Color(0xFFFF8C00),
       endDrawer: DriverProfileDrawer(
-        userName: 'Marie Tan',
-        rating: '4.0',
         onProfileTap: () {
           // Navigate to profile page
         },

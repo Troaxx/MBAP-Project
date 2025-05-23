@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/passenger_profile_drawer.dart';
 
-class PassengerViewListing extends StatefulWidget {
-  const PassengerViewListing();
+class PassengerListing3 extends StatefulWidget {
+  const PassengerListing3();
 
   @override
-  State<PassengerViewListing> createState() => _PassengerViewListingState();
+  State<PassengerListing3> createState() => _PassengerListing3State();
 }
 
-class _PassengerViewListingState extends State<PassengerViewListing> {
+class _PassengerListing3State extends State<PassengerListing3> {
   // Track expanded state
   bool _isExpanded = false;
 
@@ -23,13 +23,11 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
   @override
   Widget build(BuildContext context) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
-    
+
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: const Color(0xFFFF8C00),
       endDrawer: ProfileDrawer(
-        userName: 'Marie Tan',
-        rating: '4.0',
         onProfileTap: () {
           // Navigate to profile page
         },
@@ -77,10 +75,7 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                 radius: 20,
                                 backgroundColor: Colors.white,
                                 foregroundColor: const Color(0xFFFF8C00),
-                                child: Icon(
-                                  Icons.person,
-                                  size: 30,
-                                ),
+                                child: Icon(Icons.person, size: 30),
                               ),
                             ),
                           ),
@@ -105,30 +100,28 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                   // Profile Section
                                   Row(
                                     children: [
-                                      Image.asset('images/icons/color-profile.png', width: 50, height: 50),
+                                      Icon(Icons.account_circle),
                                       const SizedBox(width: 12),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: const [
                                             Text(
-                                              'abcdefuser123',
+                                              'mike_wong_2001',
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            Text(
-                                              '★ ★ ★ ★',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Color(0xFFFF8C00),
-                                              ),
-                                            ),
                                           ],
                                         ),
                                       ),
-                                      Image.asset('images/icons/nets-icon.png', width: 80, height: 80),
+                                      Image.asset(
+                                        'images/icons/nets-icon.png',
+                                        width: 80,
+                                        height: 80,
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 16),
@@ -143,21 +136,25 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                   Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.all(12),
-                                    margin: const EdgeInsets.only(top: 8, bottom: 16),
+                                    margin: const EdgeInsets.only(
+                                      top: 8,
+                                      bottom: 16,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: Colors.grey[200],
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text(
-                                          'Random Address 123\nBlock 123',
+                                          'Jurong East MRT\n10 Jurong East Street 12',
                                           style: TextStyle(fontSize: 14),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          '0.8km from you',
+                                          '2.5km from you',
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: Colors.grey[600],
@@ -178,7 +175,7 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                       ),
                                       SizedBox(width: 8),
                                       Text(
-                                        '8:00AM',
+                                        '7:30AM',
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
@@ -198,21 +195,25 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                   Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.all(12),
-                                    margin: const EdgeInsets.only(top: 8, bottom: 16),
+                                    margin: const EdgeInsets.only(
+                                      top: 8,
+                                      bottom: 16,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: Colors.grey[200],
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text(
-                                          'Temasek Polytechnic\n21 Tampines Ave 1,\nSingapore 529757',
+                                          'Nanyang Technological University\n50 Nanyang Ave,\nSingapore 639798',
                                           style: TextStyle(fontSize: 14),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          '3.2 km from you',
+                                          '18.5 km from you',
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: Colors.grey[600],
@@ -231,30 +232,39 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                   ),
                                   const SizedBox(height: 8),
                                   const Text(
-                                    '• 4.0 GPA if you can impress\n  me with your music choice',
+                                    '• Good music, friendly conversation\n• Split petrol costs fairly',
                                     style: TextStyle(fontSize: 14),
                                   ),
                                 ],
                               ),
                             ),
-                            
+
                             // View More Details Button (Clickable)
                             InkWell(
                               onTap: _toggleExpanded,
                               child: Container(
                                 width: double.infinity,
-                                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12.0,
+                                ),
                                 decoration: BoxDecoration(
                                   border: Border(
                                     top: BorderSide(color: Colors.grey[300]!),
-                                    bottom: _isExpanded ? BorderSide(color: Colors.grey[300]!) : BorderSide.none,
+                                    bottom:
+                                        _isExpanded
+                                            ? BorderSide(
+                                              color: Colors.grey[300]!,
+                                            )
+                                            : BorderSide.none,
                                   ),
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      _isExpanded ? "Hide Details" : "View More Details",
+                                      _isExpanded
+                                          ? "Hide Details"
+                                          : "View More Details",
                                       style: const TextStyle(
                                         color: Color(0xFFFF8C00),
                                         fontWeight: FontWeight.bold,
@@ -263,14 +273,16 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                     ),
                                     const SizedBox(width: 8),
                                     Icon(
-                                      _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                                      _isExpanded
+                                          ? Icons.keyboard_arrow_up
+                                          : Icons.keyboard_arrow_down,
                                       color: const Color(0xFFFF8C00),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                            
+
                             // Additional details section (conditionally visible)
                             if (_isExpanded)
                               Padding(
@@ -288,22 +300,32 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                       child: Column(
                                         children: [
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
                                             children: [
-                                              _buildStatItem('Est. Distance', '10.5 km'),
-                                              _buildStatItem('Est. Duration', '25 min'),
-                                              _buildStatItem('Cost', '\$5.50'),
+                                              _buildStatItem(
+                                                'Est. Distance',
+                                                '19.8 km',
+                                              ),
+                                              _buildStatItem(
+                                                'Est. Duration',
+                                                '35 min',
+                                              ),
+                                              _buildStatItem('Cost', '\$7.20'),
                                             ],
                                           ),
                                           const SizedBox(height: 16),
                                           const LinearProgressIndicator(
-                                            value: 0.7,
+                                            value: 0.3,
                                             backgroundColor: Colors.grey,
-                                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF8C00)),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Color(0xFFFF8C00),
+                                                ),
                                           ),
                                           const SizedBox(height: 8),
                                           const Text(
-                                            '3 seats out of 4 filled',
+                                            '1 seat out of 4 filled',
                                             style: TextStyle(
                                               color: Colors.grey,
                                               fontSize: 12,
@@ -313,7 +335,7 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                       ),
                                     ),
                                     const SizedBox(height: 16),
-                                    
+
                                     // Route Map Preview (Placeholder)
                                     Container(
                                       width: double.infinity,
@@ -329,9 +351,9 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                         ),
                                       ),
                                     ),
-                                    
+
                                     const SizedBox(height: 16),
-                                    
+
                                     // Driver Past Reviews
                                     const Text(
                                       'DRIVER REVIEWS',
@@ -342,22 +364,20 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                     ),
                                     const SizedBox(height: 8),
                                     _buildReviewItem(
-                                      'Great driver, very punctual!',
-                                      '★★★★★',
-                                      'John D.',
-                                      '2 days ago'
+                                      'Fun ride, great playlist!',
+                                      'Emma C.',
+                                      '3 days ago',
                                     ),
                                     const Divider(),
                                     _buildReviewItem(
-                                      'Nice car and smooth ride.',
-                                      '★★★★',
-                                      'Sarah L.',
-                                      '1 week ago'
+                                      'Smooth drive, fair pricing.',
+                                      'Kevin L.',
+                                      '1 week ago',
                                     ),
                                   ],
                                 ),
                               ),
-                            
+
                             // Action Buttons
                             Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -367,11 +387,17 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                     child: ElevatedButton(
                                       onPressed: () {},
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFFC5A216),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(25),
+                                        backgroundColor: const Color(
+                                          0xFFC5A216,
                                         ),
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            25,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
                                       ),
                                       child: const Text(
                                         'MESSAGE',
@@ -389,9 +415,13 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.green,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(25),
+                                          borderRadius: BorderRadius.circular(
+                                            25,
+                                          ),
                                         ),
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
                                       ),
                                       child: const Text(
                                         'BOOK',
@@ -430,32 +460,23 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
       ),
     );
   }
-  
+
   // Helper method to build stat items
   Widget _buildStatItem(String label, String value) {
     return Column(
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 12,
-          ),
-        ),
+        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
       ],
     );
   }
-  
+
   // Helper method to build review items
-  Widget _buildReviewItem(String comment, String rating, String reviewer, String date) {
+  Widget _buildReviewItem(String comment, String reviewer, String date) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
@@ -473,20 +494,9 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
               ),
               Text(
                 date,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
               ),
             ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            rating,
-            style: const TextStyle(
-              color: Color(0xFFFF8C00),
-              fontSize: 14,
-            ),
           ),
           const SizedBox(height: 4),
           Text(comment),
@@ -494,5 +504,4 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
       ),
     );
   }
-}
-
+} 
