@@ -1,9 +1,49 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
-import '../widgets/passenger_profile_drawer.dart';
+import '../widgets/driver_profile_drawer.dart';
 
-class PassengerHomePage extends StatelessWidget {
-  const PassengerHomePage();
+class DriverHomePage extends StatefulWidget {
+  const DriverHomePage();
+
+  @override
+  State<DriverHomePage> createState() => _DriverHomePageState();
+}
+
+class _DriverHomePageState extends State<DriverHomePage> {
+  bool isAvailable = true;
+
+  void _showAvailabilityConfirmationDialog() {
+    final String message = isAvailable
+        ? 'Are you sure you want to change to unavailable? This means you cannot accept any rides until you change the status back to available.'
+        : 'Are you sure you want to change to available? Turning this on means you are available to accept rides.';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Status Change'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () {
+                setState(() {
+                  isAvailable = !isAvailable;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +52,7 @@ class PassengerHomePage extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: const Color(0xFFFF8C00),
-      endDrawer: ProfileDrawer(
+      endDrawer: DriverProfileDrawer(
         userName: 'Marie Tan',
         rating: '4.0',
         onProfileTap: () {
@@ -45,7 +85,7 @@ class PassengerHomePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'CarpoolSG',
+                              'CarpoolSG (Driver)',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -53,7 +93,7 @@ class PassengerHomePage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Hey, Marie Tan.',
+                              'Hey, David Tan.',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
@@ -61,7 +101,7 @@ class PassengerHomePage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Where should we go today?',
+                              'Who are we picking up today?',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -138,35 +178,39 @@ class PassengerHomePage extends StatelessWidget {
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'Your Last Trip',
+                            children: [
+                              const Text(
+                                'Driver Status',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
                               ),
                               Text(
-                                'Temasek Polytechnic',
+                                isAvailable ? 'Available' : 'Unavailable',
                                 style: TextStyle(
-                                  color: Colors.grey,
+                                  color: isAvailable ? Colors.green : Colors.red,
                                   fontSize: 14,
                                 ),
                               ),
                             ],
                           ),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: _showAvailabilityConfirmationDialog,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.grey[200],
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
                             ),
-                            child: const Text(
-                              'Rebook',
+                            child: Text(
+                              isAvailable 
+                                  ? 'Change to unavailable' 
+                                  : 'Change to available',
                               style: TextStyle(
-                                color: Color(0xFFFF8C00),
+                                color: isAvailable 
+                                    ? const Color.fromARGB(255, 255, 34, 0)
+                                    : const Color(0xFF4CAF50),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -183,7 +227,7 @@ class PassengerHomePage extends StatelessWidget {
                       ),
                       child: ListTile(
                         title: const Text(
-                          'View Listings',
+                          'Create a Listing',
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
@@ -192,9 +236,9 @@ class PassengerHomePage extends StatelessWidget {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.list),
+                            const Icon(Icons.post_add),
                             const SizedBox(width: 8),
-                            const Icon(Icons.chevron_right),
+                            const Icon(Icons.chevron_right)
                           ],
                         ),
                         onTap: () {

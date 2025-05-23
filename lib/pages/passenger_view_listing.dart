@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
-import '../widgets/profile_drawer.dart';
+import '../widgets/passenger_profile_drawer.dart';
 
 class PassengerViewListing extends StatefulWidget {
   const PassengerViewListing();

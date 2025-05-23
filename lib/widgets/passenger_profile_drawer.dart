@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../pages/driver_home.dart';
 
 class ProfileDrawer extends StatelessWidget {
   final String userName;
@@ -99,6 +100,17 @@ class ProfileDrawer extends StatelessWidget {
               if (onSettingsTap != null) {
                 onSettingsTap!();
               }
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.swap_horiz),
+            title: const Text('Swap to Driver'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const DriverHomePage()),
+              );
             },
           ),
           const Divider(),
