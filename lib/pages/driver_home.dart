@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/bottom_nav_bar.dart';
+import '../widgets/driver_bottom_nav_bar.dart';
 import '../widgets/driver_profile_drawer.dart';
 
 class DriverHomePage extends StatefulWidget {
@@ -48,7 +48,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
   @override
   Widget build(BuildContext context) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
-    
+
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: const Color(0xFFFF8C00),
@@ -240,7 +240,34 @@ class _DriverHomePageState extends State<DriverHomePage> {
                           ],
                         ),
                         onTap: () {
-                          Navigator.pushNamed(context, '/passenger_view_listing');
+                          Navigator.pushNamed(context, '/driver_create_listing');
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        title: const Text(
+                          'My Listings',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.list),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.chevron_right),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/driver_listings');
                         },
                       ),
                     ),
@@ -310,7 +337,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                 topRight: Radius.circular(30),
               ),
             ),
-            child: const BottomNavBar(currentIndex: 0),
+            child: const DriverBottomNavBar(currentIndex: 0),
           ),
         ],
       ),

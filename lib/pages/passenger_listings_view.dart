@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/passenger_profile_drawer.dart';
 import '../widgets/search_bar_widget.dart';
+import '../models/listing.dart';
+import '../services/listing_service.dart';
 
-class PassengerListingsView extends StatelessWidget {
+class PassengerListingsView extends StatefulWidget {
   const PassengerListingsView();
+
+  @override
+  State<PassengerListingsView> createState() => _PassengerListingsViewState();
+}
+
+class _PassengerListingsViewState extends State<PassengerListingsView> {
+  final ListingService _listingService = ListingService();
 
   @override
   Widget build(BuildContext context) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
+    final allListings = _listingService.getAllListings();
     
     return Scaffold(
       key: scaffoldKey,
@@ -77,48 +88,15 @@ class PassengerListingsView extends StatelessWidget {
                     const SizedBox(height: 20),
                     // Listings
                     Expanded(
-                      child: ListView(
-                        children: [
-                          _buildListingCard(
-                            context,
-                            driverName: 'John Tan',
-                            from: 'Tampines Hub',
-                            to: 'Temasek Polytechnic',
-                            time: '8:00 AM',
-                            price: 'S\$5.50',
-                            availableSeats: '2 seats left',
-                            onTap: () {
-                              Navigator.pushNamed(context, '/passenger_listing1');
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          _buildListingCard(
-                            context,
-                            driverName: 'Sarah Lim',
-                            from: 'Bedok Mall',
-                            to: 'Singapore Polytechnic',
-                            time: '7:45 AM',
-                            price: 'S\$6.00',
-                            availableSeats: '1 seat left',
-                            onTap: () {
-                              Navigator.pushNamed(context, '/passenger_listing2');
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          _buildListingCard(
-                            context,
-                            driverName: 'Michael Wong',
-                            from: 'Jurong East',
-                            to: 'NTU',
-                            time: '7:30 AM',
-                            price: 'S\$7.20',
-                            availableSeats: '3 seats left',
-                            onTap: () {
-                              Navigator.pushNamed(context, '/passenger_listing3');
-                            },
-                          ),
-                        ],
-                      ),
+                      child: allListings.isEmpty
+                          ? _buildEmptyState()
+                          : ListView.builder(
+                              itemCount: allListings.length,
+                              itemBuilder: (context, index) {
+                                final listing = allListings[index];
+                                return _buildListingCard(context, listing);
+                              },
+                            ),
                     ),
                   ],
                 ),
@@ -142,31 +120,64 @@ class PassengerListingsView extends StatelessWidget {
     );
   }
 
-  Widget _buildListingCard(
-    BuildContext context, {
-    required String driverName,
-    required String from,
-    required String to,
-    required String time,
-    required String price,
-    required String availableSeats,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+  Widget _buildEmptyState() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.search_off,
+              size: 80,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No listings available',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Check back later for new ride offers!',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[500],
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildListingCard(BuildContext context, Listing listing) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: GestureDetector(
+        onTap: () {
+          // Navigate to listing details
+          _showListingDetails(listing);
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -187,14 +198,14 @@ class PassengerListingsView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        driverName,
+                        listing.driverName,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
                       Text(
-                        availableSeats,
+                        '${listing.availableSeats} seats left',
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
@@ -207,7 +218,7 @@ class PassengerListingsView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      price,
+                      'S\$${listing.cost.toStringAsFixed(2)}',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -215,7 +226,7 @@ class PassengerListingsView extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      time,
+                      DateFormat('HH:mm').format(listing.departureTime),
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -237,7 +248,7 @@ class PassengerListingsView extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    from,
+                    listing.pickupPoint,
                     style: const TextStyle(fontSize: 14),
                   ),
                 ),
@@ -254,8 +265,27 @@ class PassengerListingsView extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    to,
+                    listing.destination,
                     style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Date
+            Row(
+              children: [
+                const Icon(
+                  Icons.calendar_today,
+                  color: Colors.grey,
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  DateFormat('dd/MM/yyyy').format(listing.departureTime),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
                   ),
                 ),
               ],
@@ -263,6 +293,62 @@ class PassengerListingsView extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showListingDetails(Listing listing) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Listing Details',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFFF8C00),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Driver: ${listing.driverName}'),
+              SizedBox(height: 8),
+              Text('From: ${listing.pickupPoint}'),
+              SizedBox(height: 8),
+              Text('To: ${listing.destination}'),
+              SizedBox(height: 8),
+              Text('Cost: S\$${listing.cost.toStringAsFixed(2)}'),
+              SizedBox(height: 8),
+              Text('Date: ${DateFormat('dd/MM/yyyy HH:mm').format(listing.departureTime)}'),
+              SizedBox(height: 8),
+              Text('Available Seats: ${listing.availableSeats}'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Booking request sent!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFFF8C00),
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Book Ride'),
+            ),
+          ],
+        );
+      },
     );
   }
 } 

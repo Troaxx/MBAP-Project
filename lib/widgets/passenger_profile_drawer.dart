@@ -71,9 +71,7 @@ class ProfileDrawer extends StatelessWidget {
             title: const Text('Ride History'),
             onTap: () {
               Navigator.pop(context);
-              if (onHistoryTap != null) {
-                onHistoryTap!();
-              }
+              Navigator.pushNamed(context, '/passenger_ride_history');
             },
           ),
           ListTile(

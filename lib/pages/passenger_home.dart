@@ -196,7 +196,7 @@ class PassengerHomePage extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          Navigator.pushNamed(context, '/passenger_view_listing');
+                          Navigator.pushNamed(context, '/passenger_listings');
                         },
                       ),
                     ),

@@ -61,9 +61,7 @@ class DriverProfileDrawer extends StatelessWidget {
             title: const Text('Ride History'),
             onTap: () {
               Navigator.pop(context);
-              if (onProfileTap != null) {
-                onProfileTap!();
-              }
+              Navigator.pushNamed(context, '/driver_history');
             },
           ),
           ListTile(
