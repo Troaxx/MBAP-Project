@@ -17,11 +17,13 @@ class _DriverCreateListingState extends State<DriverCreateListing> {
 
   String? pickupPoint;
   String? destination;
-  double? cost;
+  double? cost; 
+  int? seats;
   DateTime? leavingTime;
   DateTime? arrivingTime;
   bool isAvailable = true;
   String? vehicleType;
+
 
   final TextEditingController _leavingTimeController = TextEditingController();
 
@@ -158,6 +160,7 @@ class _DriverCreateListingState extends State<DriverCreateListing> {
       pickupPoint: pickupPoint!,
       destination: destination!,
       cost: cost!,
+      seats: seats!,
       departureTime: leavingTime!,
       availableSeats: 4, 
     );
@@ -331,6 +334,23 @@ class _DriverCreateListingState extends State<DriverCreateListing> {
                                         },
                                         onSaved: (value) {
                                           cost = double.tryParse(value!);
+                                        },
+                                      ),
+                                      const SizedBox(height: 16),
+                                      TextFormField(
+                                        decoration: InputDecoration(
+                                          labelText: 'Available Seats',
+                                          border: OutlineInputBorder(),
+                                          prefixIcon: Icon(Icons.people),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Available Seats is required';
+                                          }
+                                          return null;
+                                        },
+                                        onSaved: (value) {
+                                          seats = int.tryParse(value!);
                                         },
                                       ),
                                       const SizedBox(height: 16),

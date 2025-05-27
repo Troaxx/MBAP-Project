@@ -12,6 +12,7 @@ import 'pages/driver_listings_view.dart';
 import 'pages/driver_home.dart';
 import 'pages/driver_history.dart';
 import 'pages/forgot_password.dart';
+import 'pages/register_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         '/driver_home': (context) => const DriverHomePage(),
         '/driver_history': (context) => const DriverHistory(),
         '/forgot_password': (context) => const ForgotPassword(),
+        '/register': (context) => const RegisterPage(),
       },
     );
   }

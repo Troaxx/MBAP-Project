@@ -4,6 +4,7 @@ class Listing {
   final String pickupPoint;
   final String destination;
   final double cost;
+  final int seats;
   final DateTime departureTime;
   final int availableSeats;
   final bool isActive;
@@ -14,6 +15,7 @@ class Listing {
     required this.pickupPoint,
     required this.destination,
     required this.cost,
+    required this.seats,
     required this.departureTime,
     this.availableSeats = 4,
     this.isActive = true,
@@ -25,6 +27,7 @@ class Listing {
     String? pickupPoint,
     String? destination,
     double? cost,
+    int? seats,
     DateTime? departureTime,
     int? availableSeats,
     bool? isActive,
@@ -35,6 +38,7 @@ class Listing {
       pickupPoint: pickupPoint ?? this.pickupPoint,
       destination: destination ?? this.destination,
       cost: cost ?? this.cost,
+      seats: seats ?? this.seats,
       departureTime: departureTime ?? this.departureTime,
       availableSeats: availableSeats ?? this.availableSeats,
       isActive: isActive ?? this.isActive,

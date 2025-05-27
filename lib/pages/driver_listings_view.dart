@@ -185,7 +185,7 @@ class _DriverListingsViewState extends State<DriverListingsView> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -297,12 +297,138 @@ class _DriverListingsViewState extends State<DriverListingsView> {
   }
 
   void _editListing(Listing listing) {
-    // Navigate to edit page (we can create this later or reuse create page)
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Edit functionality coming soon!'),
-        backgroundColor: Colors.blue,
-      ),
+    final TextEditingController pickupController = TextEditingController(text: listing.pickupPoint);
+    final TextEditingController destinationController = TextEditingController(text: listing.destination);
+    final TextEditingController costController = TextEditingController(text: listing.cost.toString());
+    final TextEditingController seatsController = TextEditingController(text: listing.availableSeats.toString());
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.8,
+              maxWidth: MediaQuery.of(context).size.width * 0.9,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Edit Listing',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Color(0xFFFF8C00),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: pickupController,
+                          decoration: InputDecoration(
+                            labelText: 'Pickup Point',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        TextField(
+                          controller: destinationController,
+                          decoration: InputDecoration(
+                            labelText: 'Destination',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        TextField(
+                          controller: costController,
+                          decoration: InputDecoration(
+                            labelText: 'Cost (S\$)',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          ),
+                          keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        ),
+                        SizedBox(height: 12),
+                        TextField(
+                          controller: seatsController,
+                          decoration: InputDecoration(
+                            labelText: 'Available Seats',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Validate inputs
+                        final double? cost = double.tryParse(costController.text);
+                        final int? seats = int.tryParse(seatsController.text);
+                        
+                        if (pickupController.text.isEmpty || 
+                            destinationController.text.isEmpty || 
+                            cost == null || 
+                            seats == null || 
+                            seats <= 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Please fill all fields with valid values'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+                        
+                        // Update the listing using copyWith
+                        final updatedListing = listing.copyWith(
+                          pickupPoint: pickupController.text,
+                          destination: destinationController.text,
+                          cost: cost,
+                          availableSeats: seats,
+                        );
+                        
+                        _listingService.updateListing(listing.id, updatedListing);
+                        Navigator.of(context).pop();
+                        setState(() {}); // Refresh the list
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Listing updated successfully!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFFF8C00),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text('Update'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -37,6 +37,10 @@ class LoginScreen extends StatelessWidget {
     Navigator.pushNamed(context, '/forgot_password');
   }
 
+  void _navigateToRegisterPage(BuildContext context) {
+    Navigator.pushNamed(context, '/register');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -177,7 +181,7 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
                       // Forgot Password (centered)
                       Center(
                         child: TextButton(
@@ -210,7 +214,7 @@ class LoginScreen extends StatelessWidget {
                           ),
                           SizedBox(width: 2),
                           TextButton(
-                            onPressed: null,
+                            onPressed: () => _navigateToRegisterPage(context),
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
                               minimumSize: const Size(50, 30),
