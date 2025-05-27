@@ -100,10 +100,11 @@ class ProfileDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Log Out'),
             onTap: () {
-              Navigator.pop(context);
-              if (onLogoutTap != null) {
-                onLogoutTap!();
-              }
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/login',
+                (route) => false,
+              ); //removes all previous routes, and ensures users can't navigate back to authenticated screens.
             },
           ),
         ],

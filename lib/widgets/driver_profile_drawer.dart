@@ -21,20 +21,14 @@ class DriverProfileDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Color(0xFFFF8C00),
-            ),
+            decoration: const BoxDecoration(color: Color(0xFFFF8C00)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.person,
-                    size: 40,
-                    color: Color(0xFFFF8C00),
-                  ),
+                  child: Icon(Icons.person, size: 40, color: Color(0xFFFF8C00)),
                 ),
                 const SizedBox(height: 10),
                 const Text(
@@ -48,10 +42,7 @@ class DriverProfileDrawer extends StatelessWidget {
                 const SizedBox(height: 5),
                 const Text(
                   '+65 91325151',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ],
             ),
@@ -91,7 +82,9 @@ class DriverProfileDrawer extends StatelessWidget {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const PassengerHomePage()),
+                MaterialPageRoute(
+                  builder: (context) => const PassengerHomePage(),
+                ),
               );
             },
           ),
@@ -100,14 +93,15 @@ class DriverProfileDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Log Out'),
             onTap: () {
-              Navigator.pop(context);
-              if (onLogoutTap != null) {
-                onLogoutTap!();
-              }
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/login',
+                (route) => false,
+              ); //removes all previous routes, and ensures users can't navigate back to authenticated screens.
             },
           ),
         ],
       ),
     );
   }
-} 
+}
