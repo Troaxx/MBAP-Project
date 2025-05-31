@@ -89,6 +89,7 @@ class _DriverCreateListingState extends State<DriverCreateListing> {
                 _buildDetailRow('Pickup Point:', pickupPoint ?? ''),
                 _buildDetailRow('Destination:', destination ?? ''),
                 _buildDetailRow('Cost:', 'S\$${cost?.toStringAsFixed(2) ?? '0.00'}'),
+                _buildDetailRow('Available Seats:', seats?.toString() ?? ''),
                 _buildDetailRow('Departure Time:', 
                   leavingTime != null 
                     ? DateFormat('dd/MM/yyyy HH:mm').format(leavingTime!)
@@ -328,7 +329,7 @@ class _DriverCreateListingState extends State<DriverCreateListing> {
                                           }
                                           final parsed = double.tryParse(value);
                                           if (parsed == null || parsed <= 0) {
-                                            return 'Please enter a valid cost. The value should be a number.';
+                                            return 'Invalid cost.\nThe value should be a positive number.';
                                           }
                                           return null;
                                         },
@@ -338,6 +339,7 @@ class _DriverCreateListingState extends State<DriverCreateListing> {
                                       ),
                                       const SizedBox(height: 16),
                                       TextFormField(
+                                        keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
                                           labelText: 'Available Seats',
                                           border: OutlineInputBorder(),
@@ -346,6 +348,10 @@ class _DriverCreateListingState extends State<DriverCreateListing> {
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return 'Available Seats is required';
+                                          }
+                                          final parsed = int.tryParse(value);
+                                          if (parsed == null || parsed <= 0) {
+                                            return 'Invalid seats.\nThe value should be a whole positive number.';
                                           }
                                           return null;
                                         },

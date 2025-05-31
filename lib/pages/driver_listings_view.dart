@@ -301,6 +301,7 @@ class _DriverListingsViewState extends State<DriverListingsView> {
     final TextEditingController destinationController = TextEditingController(text: listing.destination);
     final TextEditingController costController = TextEditingController(text: listing.cost.toString());
     final TextEditingController seatsController = TextEditingController(text: listing.availableSeats.toString());
+    final TextEditingController departureTimeController = TextEditingController(text: DateFormat('dd/MM/yyyy HH:mm').format(listing.departureTime));
     
     showDialog(
       context: context,
@@ -364,6 +365,15 @@ class _DriverListingsViewState extends State<DriverListingsView> {
                             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           ),
                           keyboardType: TextInputType.number,
+                        ),
+                        SizedBox(height: 12),
+                        TextField(
+                          controller: departureTimeController,
+                          decoration: InputDecoration(
+                            labelText: 'Departure Time',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          ),
                         ),
                       ],
                     ),
