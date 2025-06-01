@@ -91,7 +91,7 @@ class _PassengerChatsPageState extends State<PassengerChatsPage> {
                           ),
                           if (hasActiveBooking && currentBooking!.carModel != null)
                             Text(
-                              currentBooking!.carModel!,
+                              currentBooking.carModel!,
                               style: TextStyle(
                                 color: const Color(0xCCFFFFFF),
                                 fontSize: 14,
