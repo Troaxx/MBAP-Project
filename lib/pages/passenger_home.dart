@@ -12,20 +12,7 @@ class PassengerHomePage extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: const Color(0xFFFF8C00),
-      endDrawer: ProfileDrawer(
-        onProfileTap: () {
-          // Navigate to profile page
-        },
-        onHistoryTap: () {
-          // Navigate to history page
-        },
-        onSettingsTap: () {
-          // Navigate to settings page
-        },
-        onLogoutTap: () {
-          // Handle logout
-        },
-      ),
+      endDrawer: ProfileDrawer(),
       body: Column(
         children: [
           Expanded(

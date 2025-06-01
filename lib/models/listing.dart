@@ -8,6 +8,8 @@ class Listing {
   final DateTime departureTime;
   final int availableSeats;
   final bool isActive;
+  final String? carModel;      // vehicle make and model (e.g., "Toyota Camry")
+  final String? licensePlate;  // vehicle license plate number (e.g., "SBA1234X")
 
   Listing({
     required this.id,
@@ -17,8 +19,10 @@ class Listing {
     required this.cost,
     required this.seats,
     required this.departureTime,
-    this.availableSeats = 4,
+    required this.availableSeats,
     this.isActive = true,
+    this.carModel,
+    this.licensePlate,
   });
 
   Listing copyWith({
@@ -31,6 +35,8 @@ class Listing {
     DateTime? departureTime,
     int? availableSeats,
     bool? isActive,
+    String? carModel,
+    String? licensePlate,
   }) {
     return Listing(
       id: id ?? this.id,
@@ -42,6 +48,8 @@ class Listing {
       departureTime: departureTime ?? this.departureTime,
       availableSeats: availableSeats ?? this.availableSeats,
       isActive: isActive ?? this.isActive,
+      carModel: carModel ?? this.carModel,
+      licensePlate: licensePlate ?? this.licensePlate,
     );
   }
 } 

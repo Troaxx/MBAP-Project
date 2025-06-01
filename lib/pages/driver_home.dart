@@ -52,20 +52,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: const Color(0xFFFF8C00),
-      endDrawer: DriverProfileDrawer(
-        onProfileTap: () {
-          // Navigate to profile page
-        },
-        onHistoryTap: () {
-          // Navigate to history page
-        },
-        onSettingsTap: () {
-          // Navigate to settings page
-        },
-        onLogoutTap: () {
-          // Handle logout
-        },
-      ),
+      endDrawer: DriverProfileDrawer(),
       body: Column(
         children: [
           Expanded(

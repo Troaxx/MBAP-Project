@@ -2,32 +2,24 @@ import 'package:flutter/material.dart';
 import '../widgets/driver_bottom_nav_bar.dart';
 import '../widgets/driver_profile_drawer.dart';
 
-class DriverHistory extends StatelessWidget {
-  const DriverHistory();
+// driver history page - displays earnings summary and ride/payment history
+// shows completed rides, earnings, and transaction history for drivers
+class DriverHistoryPage extends StatelessWidget {
+  const DriverHistoryPage();
 
   @override
   Widget build(BuildContext context) {
+    // key to control drawer opening from profile icon
     final scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: const Color(0xFFFF8C00),
-      endDrawer: DriverProfileDrawer(
-        onProfileTap: () {
-          // Navigate to profile page
-        },
-        onHistoryTap: () {
-          // Navigate to history page
-        },
-        onSettingsTap: () {
-          // Navigate to settings page
-        },
-        onLogoutTap: () {
-          // Handle logout
-        },
-      ),
+      backgroundColor: const Color(0xFFFF8C00), // orange background theme
+      // side drawer for profile menu
+      endDrawer: DriverProfileDrawer(),
       body: Column(
         children: [
+          // main content area with history data
           Expanded(
             child: SafeArea(
               child: Padding(
@@ -35,15 +27,16 @@ class DriverHistory extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header Section
+                    // header section with title and profile icon
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        // page title and subtitle
                         const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Driver History',
+                              'CarpoolSG (Driver)',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -51,20 +44,22 @@ class DriverHistory extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Your rides and earnings overview',
+                              'Your driving history',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
+                        // profile icon that opens side drawer
                         GestureDetector(
                           onTap: () {
                             scaffoldKey.currentState!.openEndDrawer();
                           },
                           child: Material(
-                            elevation: 4,
+                            elevation: 4, // shadow effect
                             shape: const CircleBorder(),
                             clipBehavior: Clip.antiAlias,
                             child: CircleAvatar(
@@ -79,7 +74,7 @@ class DriverHistory extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     
-                    // Earnings Summary Card
+                    // earnings summary card - displays total earnings and ride count
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -87,7 +82,7 @@ class DriverHistory extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black12,
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -95,9 +90,10 @@ class DriverHistory extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
+                          // earnings icon with light green background
                           CircleAvatar(
                             radius: 25,
-                            backgroundColor: Colors.green.withOpacity(0.1),
+                            backgroundColor: const Color(0x1A4CAF50),
                             child: const Icon(
                               Icons.account_balance_wallet,
                               color: Colors.green,
@@ -105,6 +101,7 @@ class DriverHistory extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 16),
+                          // earnings details and statistics
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,6 +113,7 @@ class DriverHistory extends StatelessWidget {
                                     color: Colors.grey,
                                   ),
                                 ),
+                                // main earnings amount in green
                                 const Text(
                                   'S\$127.50',
                                   style: TextStyle(
@@ -124,6 +122,7 @@ class DriverHistory extends StatelessWidget {
                                     color: Colors.green,
                                   ),
                                 ),
+                                // additional statistics
                                 Text(
                                   'From 15 completed rides',
                                   style: TextStyle(
@@ -139,11 +138,11 @@ class DriverHistory extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     
-                    // History List
+                    // scrollable history list with rides and payments
                     Expanded(
                       child: ListView(
                         children: [
-                          // Recent Rides Section
+                          // recent rides section header
                           const Text(
                             'Recent Rides',
                             style: TextStyle(
@@ -153,6 +152,7 @@ class DriverHistory extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 12),
+                          // individual ride cards showing trip details and earnings
                           _buildDriverRideCard(
                             context,
                             passengerName: 'Marie Tan',
@@ -184,7 +184,7 @@ class DriverHistory extends StatelessWidget {
                           ),
                           const SizedBox(height: 20),
                           
-                          // Payment History Section
+                          // payment history section header
                           const Text(
                             'Payment History',
                             style: TextStyle(
@@ -194,6 +194,7 @@ class DriverHistory extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 12),
+                          // individual payment cards showing transaction details
                           _buildDriverPaymentCard(
                             context,
                             paymentId: 'DRV-3451',
@@ -231,7 +232,7 @@ class DriverHistory extends StatelessWidget {
               ),
             ),
           ),
-          // Bottom Navigation Bar
+          // bottom navigation bar with rounded corners
           Container(
             margin: EdgeInsets.zero,
             decoration: const BoxDecoration(
@@ -241,13 +242,15 @@ class DriverHistory extends StatelessWidget {
                 topRight: Radius.circular(30),
               ),
             ),
-            child: const DriverBottomNavBar(currentIndex: 4),
+            child: const DriverBottomNavBar(currentIndex: 4), // highlight history tab
           ),
         ],
       ),
     );
   }
 
+  // helper widget to create ride history cards
+  // displays individual completed ride details with passenger info and earnings
   Widget _buildDriverRideCard(
     BuildContext context, {
     required String passengerName,
@@ -264,7 +267,7 @@ class DriverHistory extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black12,
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -272,6 +275,7 @@ class DriverHistory extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // ride icon with orange background
           const CircleAvatar(
             radius: 20,
             backgroundColor: Color(0xFFFF8C00),
@@ -282,15 +286,16 @@ class DriverHistory extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
+          // ride details - passenger and route information
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Ride with $passengerName ${passengers > 1 ? '+ ${passengers - 1} others' : ''}',
+                  'Passenger: $passengerName',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -298,20 +303,21 @@ class DriverHistory extends StatelessWidget {
                   route,
                   style: TextStyle(
                     color: Colors.grey[600],
-                    fontSize: 14,
+                    fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '$date at $time',
+                  '$date • $time',
                   style: TextStyle(
                     color: Colors.grey[500],
-                    fontSize: 12,
+                    fontSize: 11,
                   ),
                 ),
               ],
             ),
           ),
+          // earnings and passenger count
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -319,16 +325,16 @@ class DriverHistory extends StatelessWidget {
                 earnings,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
                   color: Colors.green,
+                  fontSize: 16,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 '$passengers passenger${passengers > 1 ? 's' : ''}',
                 style: TextStyle(
-                  color: Colors.grey[500],
-                  fontSize: 10,
+                  color: Colors.grey[600],
+                  fontSize: 12,
                 ),
               ),
             ],
@@ -338,6 +344,8 @@ class DriverHistory extends StatelessWidget {
     );
   }
 
+  // helper widget to create payment history cards
+  // displays individual payment transaction details with status
   Widget _buildDriverPaymentCard(
     BuildContext context, {
     required String paymentId,
@@ -347,6 +355,9 @@ class DriverHistory extends StatelessWidget {
     required String amount,
     required String status,
   }) {
+    // determine status color based on payment status
+    Color statusColor = status == 'Completed' ? Colors.green : Colors.orange;
+    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -354,7 +365,7 @@ class DriverHistory extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black12,
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -362,55 +373,34 @@ class DriverHistory extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // payment icon with status-colored background
           CircleAvatar(
             radius: 20,
-            backgroundColor: Colors.green.withOpacity(0.1),
+            backgroundColor: const Color(0x1A4CAF50),
             child: const Icon(
-              Icons.account_balance_wallet,
+              Icons.payment,
               color: Colors.green,
               size: 20,
             ),
           ),
           const SizedBox(width: 12),
+          // payment details - transaction info and route
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      description,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        status,
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ),
-                  ],
+                Text(
+                  paymentId,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'ID: $paymentId',
+                  description,
                   style: TextStyle(
-                    color: Colors.grey[500],
+                    color: Colors.grey[600],
                     fontSize: 12,
                   ),
                 ),
@@ -418,33 +408,53 @@ class DriverHistory extends StatelessWidget {
                 Text(
                   route,
                   style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
+                    color: Colors.grey[500],
+                    fontSize: 11,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      date,
-                      style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      amount,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.green,
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 2),
+                Text(
+                  date,
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
+          ),
+          // payment amount and status
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                amount,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0x1A4CAF50),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  status,
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

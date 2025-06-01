@@ -5,41 +5,64 @@ import '../widgets/passenger_profile_drawer.dart';
 import '../widgets/search_bar_widget.dart';
 import '../models/listing.dart';
 import '../services/listing_service.dart';
+import '../services/booking_service.dart';
 
-class PassengerListingsView extends StatefulWidget {
-  const PassengerListingsView();
+// passenger listings view page - displays available carpool rides
+// shows list of available rides that passengers can book
+class PassengerListingsViewPage extends StatefulWidget {
+  const PassengerListingsViewPage();
 
   @override
-  State<PassengerListingsView> createState() => _PassengerListingsViewState();
+  State<PassengerListingsViewPage> createState() => _PassengerListingsViewPageState();
 }
 
-class _PassengerListingsViewState extends State<PassengerListingsView> {
+class _PassengerListingsViewPageState extends State<PassengerListingsViewPage> {
+  // service instance to fetch ride listings
   final ListingService _listingService = ListingService();
+  
+  // booking service to manage ride bookings
+  final BookingService _bookingService = BookingService();
+  
+  // list to store available ride listings
+  List<Listing> _listings = [];
+  
+  // loading state to show progress indicator
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadListings(); // fetch listings when page loads
+  }
+
+  // fetches available ride listings from the service
+  void _loadListings() {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    // simulate network delay for realistic loading experience
+    Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() {
+        _listings = _listingService.getAllListings();
+        _isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    // key to control drawer opening from profile icon
     final scaffoldKey = GlobalKey<ScaffoldState>();
-    final allListings = _listingService.getAllListings();
-    
+
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: const Color(0xFFFF8C00),
-      endDrawer: ProfileDrawer(
-        onProfileTap: () {
-          // Navigate to profile page
-        },
-        onHistoryTap: () {
-          // Navigate to history page
-        },
-        onSettingsTap: () {
-          // Navigate to settings page
-        },
-        onLogoutTap: () {
-          // Handle logout
-        },
-      ),
+      backgroundColor: const Color(0xFFFF8C00), // orange background theme
+      // side drawer for profile menu
+      endDrawer: ProfileDrawer(),
       body: Column(
         children: [
+          // main content area with listings
           Expanded(
             child: SafeArea(
               child: Padding(
@@ -47,53 +70,76 @@ class _PassengerListingsViewState extends State<PassengerListingsView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header Section
+                    // header section with title and profile icon
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Available Listings',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        // page title and subtitle
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'CarpoolSG',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Available rides',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
+                        // profile icon that opens side drawer
                         GestureDetector(
                           onTap: () {
                             scaffoldKey.currentState!.openEndDrawer();
                           },
                           child: Material(
-                            elevation: 4,
+                            elevation: 4, // shadow effect
                             shape: const CircleBorder(),
                             clipBehavior: Clip.antiAlias,
                             child: CircleAvatar(
                               radius: 20,
                               backgroundColor: Colors.white,
                               foregroundColor: const Color(0xFFFF8C00),
-                              child: Icon(
-                                Icons.person,
-                                size: 30,
-                              ),
+                              child: Icon(Icons.person, size: 30),
                             ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    // Search Bar
-                    const SearchBarWidget(
-                      hintText: 'Search destinations...',
-                    ),
-                    const SizedBox(height: 20),
-                    // Listings
+                    
+                    // content area - either loading indicator or listings
                     Expanded(
-                      child: allListings.isEmpty
-                          ? _buildEmptyState()
+                      child: _isLoading 
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : _listings.isEmpty
+                          ? const Center(
+                              child: Text(
+                                'No rides available at the moment',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            )
+                          // scrollable list of available ride listings
                           : ListView.builder(
-                              itemCount: allListings.length,
+                              itemCount: _listings.length,
                               itemBuilder: (context, index) {
-                                final listing = allListings[index];
+                                final listing = _listings[index];
                                 return _buildListingCard(context, listing);
                               },
                             ),
@@ -103,7 +149,7 @@ class _PassengerListingsViewState extends State<PassengerListingsView> {
               ),
             ),
           ),
-          // Bottom Navigation Bar
+          // bottom navigation bar with rounded corners
           Container(
             margin: EdgeInsets.zero,
             decoration: const BoxDecoration(
@@ -113,51 +159,15 @@ class _PassengerListingsViewState extends State<PassengerListingsView> {
                 topRight: Radius.circular(30),
               ),
             ),
-            child: const BottomNavBar(currentIndex: 1),
+            child: const BottomNavBar(currentIndex: 1), // highlight listings tab
           ),
         ],
       ),
     );
   }
 
-  Widget _buildEmptyState() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.search_off,
-              size: 80,
-              color: Colors.grey[400],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No listings available',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Check back later for new ride offers!',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[500],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
+  // helper widget to create individual listing cards
+  // displays ride details with driver info, route, cost, and booking option
   Widget _buildListingCard(BuildContext context, Listing listing) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -167,34 +177,35 @@ class _PassengerListingsViewState extends State<PassengerListingsView> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black12,
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: GestureDetector(
-        onTap: () {
-          // Navigate to listing details
-          _showListingDetails(listing);
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Driver info
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Color(0xFFFF8C00),
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // header row with driver info and availability
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // driver information section
+              Row(
+                children: [
+                  // driver avatar
+                  const CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Color(0xFFFF8C00),
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
+                  const SizedBox(width: 12),
+                  // driver name and vehicle info
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -205,7 +216,7 @@ class _PassengerListingsViewState extends State<PassengerListingsView> {
                         ),
                       ),
                       Text(
-                        '${listing.availableSeats} seats left',
+                        listing.carModel ?? 'Driver', // show car model if available
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
@@ -213,142 +224,232 @@ class _PassengerListingsViewState extends State<PassengerListingsView> {
                       ),
                     ],
                   ),
+                ],
+              ),
+              // available seats indicator
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0x1A4CAF50),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'S\$${listing.cost.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Color(0xFFFF8C00),
-                      ),
-                    ),
-                    Text(
-                      DateFormat('HH:mm').format(listing.departureTime),
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  '${listing.availableSeats} seats',
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          // route information with pickup and destination
+          Column(
+            children: [
+              // pickup point
+              Row(
+                children: [
+                  const Icon(
+                    Icons.location_on,
+                    color: Color(0xFFFF8C00),
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      listing.pickupPoint,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // destination point
+              Row(
+                children: [
+                  const Icon(
+                    Icons.flag,
+                    color: Colors.red,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      listing.destination,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          // vehicle information if available
+          if (listing.carModel != null || listing.licensePlate != null) ...[
+            Column(
+              children: [
+                if (listing.carModel != null)
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.directions_car,
+                        color: Colors.blue,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          listing.carModel!,
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
+                  ),
+                if (listing.carModel != null && listing.licensePlate != null)
+                  const SizedBox(height: 4),
+                if (listing.licensePlate != null)
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.confirmation_number,
+                        color: Colors.green,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          listing.licensePlate!,
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
             const SizedBox(height: 16),
-            // Route info
-            Row(
-              children: [
-                const Icon(
-                  Icons.location_on,
-                  color: Color(0xFFFF8C00),
-                  size: 16,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    listing.pickupPoint,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(
-                  Icons.flag,
-                  color: Colors.red,
-                  size: 16,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    listing.destination,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            // Date
-            Row(
-              children: [
-                const Icon(
-                  Icons.calendar_today,
-                  color: Colors.grey,
-                  size: 16,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  DateFormat('dd/MM/yyyy').format(listing.departureTime),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
           ],
-        ),
+          
+          // bottom row with departure time, cost, and book button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // departure time and cost information
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Departure: ${listing.departureTime.day}/${listing.departureTime.month}/${listing.departureTime.year} ${listing.departureTime.hour.toString().padLeft(2, '0')}:${listing.departureTime.minute.toString().padLeft(2, '0')}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'S\$${listing.cost.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Color(0xFFFF8C00),
+                    ),
+                  ),
+                ],
+              ),
+              // book ride button
+              ElevatedButton(
+                onPressed: () => _showBookingDialog(context, listing),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF8C00),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text('Book'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  void _showListingDetails(Listing listing) {
+  // displays booking confirmation dialog
+  // allows passenger to confirm ride booking with selected listing
+  void _showBookingDialog(BuildContext context, Listing listing) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-            'Listing Details',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFFF8C00),
-            ),
-          ),
+          title: const Text('Confirm Booking'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Driver: ${listing.driverName}'),
-              SizedBox(height: 8),
-              Text('From: ${listing.pickupPoint}'),
-              SizedBox(height: 8),
-              Text('To: ${listing.destination}'),
-              SizedBox(height: 8),
+              if (listing.carModel != null)
+                Text('Vehicle: ${listing.carModel}'),
+              if (listing.licensePlate != null)
+                Text('License Plate: ${listing.licensePlate}'),
+              Text('Route: ${listing.pickupPoint} → ${listing.destination}'),
               Text('Cost: S\$${listing.cost.toStringAsFixed(2)}'),
-              SizedBox(height: 8),
-              Text('Date: ${DateFormat('dd/MM/yyyy HH:mm').format(listing.departureTime)}'),
-              SizedBox(height: 8),
-              Text('Available Seats: ${listing.availableSeats}'),
+              Text('Departure: ${listing.departureTime.hour.toString().padLeft(2, '0')}:${listing.departureTime.minute.toString().padLeft(2, '0')}'),
             ],
           ),
           actions: [
+            // cancel booking button
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Close'),
+              child: const Text('Cancel'),
             ),
+            // confirm booking button
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Booking request sent!'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
+                _confirmBooking(listing);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFFF8C00),
+                backgroundColor: const Color(0xFFFF8C00),
                 foregroundColor: Colors.white,
               ),
-              child: Text('Book Ride'),
+              child: const Text('Confirm'),
             ),
           ],
         );
       },
     );
+  }
+
+  // processes the ride booking confirmation
+  // shows success message and updates available seats
+  void _confirmBooking(Listing listing) {
+    // book the ride using booking service
+    _bookingService.bookRide(listing);
+    
+    // show booking success notification
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Ride booked successfully with ${listing.driverName}!'),
+        backgroundColor: Colors.green,
+        action: SnackBarAction(
+          label: 'View Ride',
+          textColor: Colors.white,
+          onPressed: () {
+            Navigator.pushNamed(context, '/passenger_ride');
+          },
+        ),
+      ),
+    );
+    
+    // navigate to ride tracking page
+    Navigator.pushNamed(context, '/passenger_ride');
+    
+    // future: update booking in backend service
+    // future: reduce available seats count
+    // future: add to passenger's booked rides
   }
 } 

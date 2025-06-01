@@ -24,20 +24,7 @@ class _DriverListingsViewState extends State<DriverListingsView> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: const Color(0xFFFF8C00),
-      endDrawer: DriverProfileDrawer(
-        onProfileTap: () {
-          // Navigate to profile page
-        },
-        onHistoryTap: () {
-          // Navigate to history page
-        },
-        onSettingsTap: () {
-          // Navigate to settings page
-        },
-        onLogoutTap: () {
-          // Handle logout
-        },
-      ),
+      endDrawer: DriverProfileDrawer(),
       body: Column(
         children: [
           Expanded(
@@ -246,6 +233,39 @@ class _DriverListingsViewState extends State<DriverListingsView> {
           ),
           const SizedBox(height: 12),
           
+          // Vehicle info
+          if (listing.carModel != null || listing.licensePlate != null) ...[
+            if (listing.carModel != null)
+              Row(
+                children: [
+                  const Icon(Icons.directions_car, color: Colors.blue, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      listing.carModel!, 
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)
+                    ),
+                  ),
+                ],
+              ),
+            if (listing.carModel != null && listing.licensePlate != null)
+              const SizedBox(height: 4),
+            if (listing.licensePlate != null)
+              Row(
+                children: [
+                  const Icon(Icons.confirmation_number, color: Colors.green, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      listing.licensePlate!, 
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)
+                    ),
+                  ),
+                ],
+              ),
+            const SizedBox(height: 12),
+          ],
+          
           // Details
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -302,6 +322,8 @@ class _DriverListingsViewState extends State<DriverListingsView> {
     final TextEditingController costController = TextEditingController(text: listing.cost.toString());
     final TextEditingController seatsController = TextEditingController(text: listing.availableSeats.toString());
     final TextEditingController departureTimeController = TextEditingController(text: DateFormat('dd/MM/yyyy HH:mm').format(listing.departureTime));
+    final TextEditingController carModelController = TextEditingController(text: listing.carModel ?? '');
+    final TextEditingController licensePlateController = TextEditingController(text: listing.licensePlate ?? '');
     
     showDialog(
       context: context,
@@ -355,6 +377,26 @@ class _DriverListingsViewState extends State<DriverListingsView> {
                             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           ),
                           keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        ),
+                        SizedBox(height: 12),
+                        TextField(
+                          controller: carModelController,
+                          decoration: InputDecoration(
+                            labelText: 'Car Model',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            hintText: 'e.g., Toyota Camry',
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        TextField(
+                          controller: licensePlateController,
+                          decoration: InputDecoration(
+                            labelText: 'License Plate',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            hintText: 'e.g., SBA1234X',
+                          ),
                         ),
                         SizedBox(height: 12),
                         TextField(
@@ -413,6 +455,8 @@ class _DriverListingsViewState extends State<DriverListingsView> {
                           destination: destinationController.text,
                           cost: cost,
                           availableSeats: seats,
+                          carModel: carModelController.text.isNotEmpty ? carModelController.text : null,
+                          licensePlate: licensePlateController.text.isNotEmpty ? licensePlateController.text.toUpperCase() : null,
                         );
                         
                         _listingService.updateListing(listing.id, updatedListing);

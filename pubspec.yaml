@@ -71,6 +71,7 @@ flutter:
     - images/icons/search.png
     - images/icons/color-profile.png
     - images/icons/nets-icon.png
+    - images/icons/ride-map-view.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

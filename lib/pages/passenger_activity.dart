@@ -2,32 +2,24 @@ import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/passenger_profile_drawer.dart';
 
-class PassengerActivity extends StatelessWidget {
-  const PassengerActivity();
+// passenger activity page - displays ride activity and payment transactions
+// shows recent rides, payment history, and activity timeline for passengers
+class PassengerActivityPage extends StatelessWidget {
+  const PassengerActivityPage();
 
   @override
   Widget build(BuildContext context) {
+    // key to control drawer opening from profile icon
     final scaffoldKey = GlobalKey<ScaffoldState>();
-    
+
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: const Color(0xFFFF8C00),
-      endDrawer: ProfileDrawer(
-        onProfileTap: () {
-          // Navigate to profile page
-        },
-        onHistoryTap: () {
-          // Navigate to history page
-        },
-        onSettingsTap: () {
-          // Navigate to settings page
-        },
-        onLogoutTap: () {
-          // Handle logout
-        },
-      ),
+      backgroundColor: const Color(0xFFFF8C00), // orange background theme
+      // side drawer for profile menu
+      endDrawer: ProfileDrawer(),
       body: Column(
         children: [
+          // main content area with activity feed
           Expanded(
             child: SafeArea(
               child: Padding(
@@ -35,47 +27,60 @@ class PassengerActivity extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header Section
+                    // header section with title and profile icon
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Activity',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        // page title and subtitle
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'CarpoolSG',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Your activity',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
+                        // profile icon that opens side drawer
                         GestureDetector(
                           onTap: () {
                             scaffoldKey.currentState!.openEndDrawer();
                           },
                           child: Material(
-                            elevation: 4,
+                            elevation: 4, // shadow effect
                             shape: const CircleBorder(),
                             clipBehavior: Clip.antiAlias,
                             child: CircleAvatar(
                               radius: 20,
                               backgroundColor: Colors.white,
                               foregroundColor: const Color(0xFFFF8C00),
-                              child: Icon(
-                                Icons.person,
-                                size: 30,
-                              ),
+                              child: Icon(Icons.person, size: 30),
                             ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    // Activity List
+                    
+                    // scrollable activity feed with rides and payments
                     Expanded(
                       child: ListView(
                         children: [
-                          // Recent Rides Section
+                          // recent activity section header
                           const Text(
-                            'Recent Rides',
+                            'Recent Activity',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -83,34 +88,30 @@ class PassengerActivity extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 12),
+                          
+                          // ride activity cards showing trip details
                           _buildRideActivityCard(
                             context,
-                            driverName: 'Michael Wong',
-                            route: 'Jurong East MRT → NTU',
+                            driverName: 'John Tan',
+                            route: 'Tampines Hub → Temasek Polytechnic',
                             date: 'Oct 15, 2024',
-                            time: '7:30 AM',
-                            price: 'S\$7.20',
-                            onTap: () {
-                              Navigator.pushNamed(context, '/passenger_listing3');
-                            },
+                            time: '8:00 AM',
+                            status: 'Completed',
                           ),
                           const SizedBox(height: 12),
                           _buildRideActivityCard(
                             context,
                             driverName: 'Sarah Lim',
                             route: 'Bedok Mall → Singapore Polytechnic',
-                            date: 'Oct 12, 2024',
+                            date: 'Oct 14, 2024',
                             time: '7:45 AM',
-                            price: 'S\$6.00',
-                            onTap: () {
-                              Navigator.pushNamed(context, '/passenger_listing2');
-                            },
+                            status: 'Completed',
                           ),
                           const SizedBox(height: 20),
                           
-                          // Payment History Section
+                          // payment activity section header
                           const Text(
-                            'Payment History',
+                            'Payment Activity',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -118,43 +119,36 @@ class PassengerActivity extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 12),
+                          
+                          // payment activity cards showing transaction details
                           _buildPaymentActivityCard(
                             context,
-                            paymentId: 'PAY-3451',
-                            description: 'Payment to Michael Wong',
-                            route: 'Jurong East MRT → NTU',
-                            date: 'Oct 15, 2024',
-                            amount: 'S\$7.20',
-                            status: 'Completed',
-                            onTap: () {
-                              Navigator.pushNamed(context, '/passenger_listing3');
-                            },
-                          ),
-                          const SizedBox(height: 12),
-                          _buildPaymentActivityCard(
-                            context,
-                            paymentId: 'PAY-3420',
-                            description: 'Payment to Sarah Lim',
-                            route: 'Bedok Mall → Singapore Polytechnic',
-                            date: 'Oct 12, 2024',
-                            amount: 'S\$6.00',
-                            status: 'Completed',
-                            onTap: () {
-                              Navigator.pushNamed(context, '/passenger_listing2');
-                            },
-                          ),
-                          const SizedBox(height: 12),
-                          _buildPaymentActivityCard(
-                            context,
-                            paymentId: 'PAY-3398',
-                            description: 'Payment to John Tan',
+                            transactionId: 'TXN-3451',
+                            description: 'Ride payment',
                             route: 'Tampines Hub → Temasek Polytechnic',
-                            date: 'Oct 10, 2024',
+                            date: 'Oct 15, 2024',
                             amount: 'S\$5.50',
                             status: 'Completed',
-                            onTap: () {
-                              Navigator.pushNamed(context, '/passenger_listing1');
-                            },
+                          ),
+                          const SizedBox(height: 12),
+                          _buildPaymentActivityCard(
+                            context,
+                            transactionId: 'TXN-3420',
+                            description: 'Ride payment',
+                            route: 'Bedok Mall → Singapore Polytechnic',
+                            date: 'Oct 14, 2024',
+                            amount: 'S\$6.00',
+                            status: 'Completed',
+                          ),
+                          const SizedBox(height: 12),
+                          _buildPaymentActivityCard(
+                            context,
+                            transactionId: 'TXN-3398',
+                            description: 'Ride payment',
+                            route: 'Jurong East → NTU',
+                            date: 'Oct 13, 2024',
+                            amount: 'S\$7.20',
+                            status: 'Refunded',
                           ),
                         ],
                       ),
@@ -164,7 +158,7 @@ class PassengerActivity extends StatelessWidget {
               ),
             ),
           ),
-          // Bottom Navigation Bar
+          // bottom navigation bar with rounded corners
           Container(
             margin: EdgeInsets.zero,
             decoration: const BoxDecoration(
@@ -174,234 +168,217 @@ class PassengerActivity extends StatelessWidget {
                 topRight: Radius.circular(30),
               ),
             ),
-            child: const BottomNavBar(currentIndex: 4),
+            child: const BottomNavBar(currentIndex: 4), // highlight activity tab
           ),
         ],
       ),
     );
   }
 
+  // helper widget to create ride activity cards
+  // displays individual ride activities with trip details and status
   Widget _buildRideActivityCard(
     BuildContext context, {
     required String driverName,
     required String route,
     required String date,
     required String time,
-    required String price,
-    required VoidCallback onTap,
+    required String status,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // activity icon with orange background
+          const CircleAvatar(
+            radius: 20,
+            backgroundColor: Color(0xFFFF8C00),
+            child: Icon(
+              Icons.directions_car,
+              color: Colors.white,
+              size: 20,
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            const CircleAvatar(
-              radius: 20,
-              backgroundColor: Color(0xFFFF8C00),
-              child: Icon(
-                Icons.directions_car,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Ride with $driverName',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    route,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '$date at $time',
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+          ),
+          const SizedBox(width: 12),
+          // activity details - trip information
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  price,
+                  'Ride with $driverName',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Color(0xFFFF8C00),
+                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Tap to view',
+                  route,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '$date • $time',
                   style: TextStyle(
                     color: Colors.grey[500],
-                    fontSize: 10,
-                    fontStyle: FontStyle.italic,
+                    fontSize: 11,
                   ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          // status badge with color-coded background
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0x1A4CAF50), // modern green background
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              status,
+              style: const TextStyle(
+                color: Colors.green,
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
+  // helper widget to create payment activity cards
+  // displays individual payment transactions with amount and status
   Widget _buildPaymentActivityCard(
     BuildContext context, {
-    required String paymentId,
+    required String transactionId,
     required String description,
     required String route,
     required String date,
     required String amount,
     required String status,
-    required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+    // determine colors based on payment status
+    Color statusColor = status == 'Completed' ? Colors.green : Colors.orange;
+    Color backgroundColor = status == 'Completed' 
+      ? const Color(0x1A4CAF50) // modern green background
+      : const Color(0x1AFF9800); // modern orange background
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // payment icon with status-colored background
+          CircleAvatar(
+            radius: 20,
+            backgroundColor: backgroundColor,
+            child: Icon(
+              Icons.payment,
+              color: statusColor,
+              size: 20,
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.green.withOpacity(0.1),
-              child: const Icon(
-                Icons.payment,
-                color: Colors.green,
-                size: 20,
+          ),
+          const SizedBox(width: 12),
+          // payment details - transaction information
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  transactionId,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  route,
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 11,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  date,
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // amount and status display
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                amount,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: statusColor,
+                  fontSize: 16,
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        description,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          status,
-                          style: const TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10,
-                          ),
-                        ),
-                      ),
-                    ],
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  status,
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'ID: $paymentId',
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    route,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        date,
-                        style: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 12,
-                        ),
-                      ),
-                      Text(
-                        amount,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Color(0xFFFF8C00),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Tap to view ride',
-                        style: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 10,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }

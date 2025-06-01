@@ -6,7 +6,7 @@ class ListingService {
   ListingService._internal();
 
   final List<Listing> _listings = [
-    // Sample data
+    // Sample data with vehicle information
     Listing(
       id: '1',
       driverName: 'John Tan',
@@ -16,6 +16,8 @@ class ListingService {
       seats: 2,
       departureTime: DateTime.now().add(Duration(hours: 1)),
       availableSeats: 2,
+      carModel: 'Toyota Camry',
+      licensePlate: 'SBA1234X',
     ),
     Listing(
       id: '2', 
@@ -26,6 +28,8 @@ class ListingService {
       seats: 2,
       departureTime: DateTime.now().add(Duration(hours: 2)),
       availableSeats: 1,
+      carModel: 'Honda Civic',
+      licensePlate: 'SGX5678Y',
     ),
     Listing(
       id: '3',
@@ -36,6 +40,8 @@ class ListingService {
       seats: 2,
       departureTime: DateTime.now().add(Duration(hours: 3)),
       availableSeats: 3,
+      carModel: 'Mazda 3',
+      licensePlate: 'SCD9012Z',
     ),
   ];
 

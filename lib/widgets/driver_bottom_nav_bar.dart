@@ -32,11 +32,10 @@ class DriverBottomNavBar extends StatelessWidget {
   }
 
   void _navigateToDriverChats(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Driver Chats coming soon!'),
-        backgroundColor: Colors.blue,
-      ),
+    Navigator.pushNamedAndRemoveUntil(
+      context, 
+      '/driver_chats', 
+      (route) => false
     );
   }
 

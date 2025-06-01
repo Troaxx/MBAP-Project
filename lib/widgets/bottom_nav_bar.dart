@@ -15,6 +15,14 @@ class BottomNavBar extends StatelessWidget {
     Navigator.pushNamed(context, '/passenger_listings_view');
   }
 
+  void _navigateToPassengerRide(BuildContext context) {
+    Navigator.pushNamed(context, '/passenger_ride');
+  }
+
+  void _navigateToPassengerChats(BuildContext context) {
+    Navigator.pushNamed(context, '/passenger_chats');
+  }
+
   void _navigateToPassengerActivity(BuildContext context) {
     Navigator.pushNamed(context, '/passenger_activity');
   }
@@ -58,6 +66,12 @@ class BottomNavBar extends StatelessWidget {
             break;
           case 1:
             _navigateToPassengerViewListing(context);
+            break;
+          case 2:
+            _navigateToPassengerRide(context);
+            break;
+          case 3:
+            _navigateToPassengerChats(context);
             break;
           case 4:
             _navigateToPassengerActivity(context);
