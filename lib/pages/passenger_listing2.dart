@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/passenger_profile_drawer.dart';
+import '../models/listing.dart';
+import '../services/booking_service.dart';
 
 class PassengerListing2 extends StatefulWidget {
   const PassengerListing2();
@@ -12,6 +14,9 @@ class PassengerListing2 extends StatefulWidget {
 class _PassengerListing2State extends State<PassengerListing2> {
   // Track expanded state
   bool _isExpanded = false;
+  
+  // booking service to manage ride bookings
+  final BookingService _bookingService = BookingService();
 
   // Toggle expansion
   void _toggleExpanded() {
@@ -42,13 +47,36 @@ class _PassengerListing2State extends State<PassengerListing2> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'CarpoolSG',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Row(
+                            children: [
+                              // Back button
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.arrow_back,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                'CarpoolSG',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                           GestureDetector(
                             onTap: () {
@@ -303,7 +331,7 @@ class _PassengerListing2State extends State<PassengerListing2> {
                                           ),
                                           const SizedBox(height: 16),
                                           const LinearProgressIndicator(
-                                            value: 0.9,
+                                            value: 0.75,
                                             backgroundColor: Colors.grey,
                                             valueColor:
                                                 AlwaysStoppedAnimation<Color>(
@@ -372,7 +400,10 @@ class _PassengerListing2State extends State<PassengerListing2> {
                                 children: [
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        // Navigate to chats page
+                                        Navigator.pushNamed(context, '/passenger_chats');
+                                      },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: const Color(
                                           0xFFC5A216,
@@ -398,7 +429,7 @@ class _PassengerListing2State extends State<PassengerListing2> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () => _showBookingDialog(context),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.green,
                                         shape: RoundedRectangleBorder(
@@ -490,5 +521,79 @@ class _PassengerListing2State extends State<PassengerListing2> {
         ],
       ),
     );
+  }
+
+  // displays booking confirmation dialog
+  // allows passenger to confirm ride booking
+  void _showBookingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Booking'),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Driver: sarahlim_88'),
+              Text('Route: Bedok Mall, 311 New Upper Changi Rd → Singapore Polytechnic'),
+              Text('Cost: S\$6.00'),
+              Text('Departure: 7:45AM'),
+            ],
+          ),
+          actions: [
+            // cancel booking button
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            // confirm booking button
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _confirmBooking();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF8C00),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // processes the ride booking confirmation
+  // shows success message and navigates to ride page
+  void _confirmBooking() {
+    // Create a proper Listing object for booking service
+    final listing = Listing(
+      id: 'listing_2',
+      driverName: 'sarahlim_88',
+      pickupPoint: 'Bedok Mall, 311 New Upper Changi Rd',
+      destination: 'Singapore Polytechnic, 500 Dover Rd, Singapore 139651',
+      departureTime: DateTime.now().add(const Duration(hours: 1, minutes: 45)), // 7:45AM approximation
+      cost: 6.00,
+      seats: 4,
+      availableSeats: 1,
+      carModel: 'Toyota Altis',
+      licensePlate: 'SBB5678C',
+    );
+    
+    // Book the ride using booking service
+    _bookingService.bookRide(listing);
+    
+    // show booking success notification
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Ride booked successfully with sarahlim_88!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+    
+    // navigate to ride tracking page
+    Navigator.pushNamed(context, '/passenger_ride');
   }
 } 

@@ -4,6 +4,7 @@ import '../widgets/passenger_profile_drawer.dart';
 import '../models/listing.dart';
 import '../services/listing_service.dart';
 import '../services/booking_service.dart';
+import 'passenger_listing1.dart';
 
 // passenger listings view page - displays available carpool rides
 // shows list of available rides that passengers can book
@@ -167,211 +168,222 @@ class _PassengerListingsViewPageState extends State<PassengerListingsViewPage> {
   // helper widget to create individual listing cards
   // displays ride details with driver info, route, cost, and booking option
   Widget _buildListingCard(BuildContext context, Listing listing) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+    return GestureDetector(
+      onTap: () {
+        // Navigate to detailed listing view with listing data
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PassengerViewListing(listing: listing),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // header row with driver info and availability
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // driver information section
-              Row(
-                children: [
-                  // driver avatar
-                  const CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Color(0xFFFF8C00),
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  // driver name and vehicle info
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        listing.driverName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        listing.carModel ?? 'Driver', // show car model if available
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              // available seats indicator
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0x1A4CAF50),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${listing.availableSeats} seats',
-                  style: const TextStyle(
-                    color: Colors.green,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          
-          // route information with pickup and destination
-          Column(
-            children: [
-              // pickup point
-              Row(
-                children: [
-                  const Icon(
-                    Icons.location_on,
-                    color: Color(0xFFFF8C00),
-                    size: 16,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      listing.pickupPoint,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              // destination point
-              Row(
-                children: [
-                  const Icon(
-                    Icons.flag,
-                    color: Colors.red,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      listing.destination,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          
-          // vehicle information if available
-          if (listing.carModel != null || listing.licensePlate != null) ...[
-            Column(
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // header row with driver info and availability
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (listing.carModel != null)
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.directions_car,
-                        color: Colors.blue,
-                        size: 16,
+                // driver information section
+                Row(
+                  children: [
+                    // driver avatar
+                    const CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Color(0xFFFF8C00),
+                      child: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                        size: 20,
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          listing.carModel!,
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(width: 12),
+                    // driver name and vehicle info
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          listing.driverName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                if (listing.carModel != null && listing.licensePlate != null)
-                  const SizedBox(height: 4),
-                if (listing.licensePlate != null)
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.confirmation_number,
-                        color: Colors.green,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          listing.licensePlate!,
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                        Text(
+                          listing.carModel ?? 'Driver', // show car model if available
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 12,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ],
+                ),
+                // available seats indicator
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0x1A4CAF50),
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  child: Text(
+                    '${listing.availableSeats} seats',
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
-          ],
-          
-          // bottom row with departure time, cost, and book button
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // departure time and cost information
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Departure: ${listing.departureTime.day}/${listing.departureTime.month}/${listing.departureTime.year} ${listing.departureTime.hour.toString().padLeft(2, '0')}:${listing.departureTime.minute.toString().padLeft(2, '0')}',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'S\$${listing.cost.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+            
+            // route information with pickup and destination
+            Column(
+              children: [
+                // pickup point
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on,
                       color: Color(0xFFFF8C00),
+                      size: 16,
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        listing.pickupPoint,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // destination point
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.flag,
+                      color: Colors.red,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        listing.destination,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            // vehicle information if available
+            if (listing.carModel != null || listing.licensePlate != null) ...[
+              Column(
+                children: [
+                  if (listing.carModel != null)
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.directions_car,
+                          color: Colors.blue,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            listing.carModel!,
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (listing.carModel != null && listing.licensePlate != null)
+                    const SizedBox(height: 4),
+                  if (listing.licensePlate != null)
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.confirmation_number,
+                          color: Colors.green,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            listing.licensePlate!,
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
-              // book ride button
-              ElevatedButton(
-                onPressed: () => _showBookingDialog(context, listing),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF8C00),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text('Book'),
-              ),
+              const SizedBox(height: 16),
             ],
-          ),
-        ],
+            
+            // bottom row with departure time, cost, and book button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // departure time and cost information
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Departure: ${listing.departureTime.day}/${listing.departureTime.month}/${listing.departureTime.year} ${listing.departureTime.hour.toString().padLeft(2, '0')}:${listing.departureTime.minute.toString().padLeft(2, '0')}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'S\$${listing.cost.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Color(0xFFFF8C00),
+                      ),
+                    ),
+                  ],
+                ),
+                // book ride button
+                ElevatedButton(
+                  onPressed: () => _showBookingDialog(context, listing),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFF8C00),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Book'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

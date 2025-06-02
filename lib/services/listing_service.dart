@@ -37,7 +37,7 @@ class ListingService {
       pickupPoint: 'Jurong East',
       destination: 'NTU',
       cost: 7.20,
-      seats: 2,
+      seats: 4,
       departureTime: DateTime.now().add(Duration(hours: 3)),
       availableSeats: 3,
       carModel: 'Mazda 3',

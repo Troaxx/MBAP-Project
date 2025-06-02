@@ -151,7 +151,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    // Last Trip Card
+                    // driver status card
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -280,7 +280,9 @@ class _DriverHomePageState extends State<DriverHomePage> {
                             const Icon(Icons.chevron_right),
                           ],
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, '/driver_chats');
+                        },
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -305,7 +307,9 @@ class _DriverHomePageState extends State<DriverHomePage> {
                             const Icon(Icons.chevron_right),
                           ],
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, '/driver_history');
+                        },
                       ),
                     ),
                     const Spacer(),

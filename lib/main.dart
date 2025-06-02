@@ -16,6 +16,8 @@ import 'pages/driver_history.dart';
 import 'pages/driver_chats.dart';
 import 'pages/forgot_password.dart';
 import 'pages/register_page.dart';
+import 'models/listing.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -53,8 +55,6 @@ class MyApp extends StatelessWidget {
         '/passenger_activity': (context) => const PassengerActivityPage(), // updated class name
         
         // passenger listing detail routes - specific ride pages
-        '/passenger_view_listing': (context) => const PassengerViewListing(),
-        '/passenger_listing1': (context) => const PassengerViewListing(),
         '/passenger_listing2': (context) => const PassengerListing2(),
         '/passenger_listing3': (context) => const PassengerListing3(),
         

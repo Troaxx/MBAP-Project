@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/passenger_profile_drawer.dart';
+import '../models/listing.dart';
+import '../services/booking_service.dart';
 
 class PassengerListing3 extends StatefulWidget {
   const PassengerListing3();
@@ -12,6 +14,9 @@ class PassengerListing3 extends StatefulWidget {
 class _PassengerListing3State extends State<PassengerListing3> {
   // Track expanded state
   bool _isExpanded = false;
+  
+  // booking service to manage ride bookings
+  final BookingService _bookingService = BookingService();
 
   // Toggle expansion
   void _toggleExpanded() {
@@ -42,13 +47,36 @@ class _PassengerListing3State extends State<PassengerListing3> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'CarpoolSG',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Row(
+                            children: [
+                              // Back button
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.arrow_back,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                'CarpoolSG',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                           GestureDetector(
                             onTap: () {
@@ -303,7 +331,7 @@ class _PassengerListing3State extends State<PassengerListing3> {
                                           ),
                                           const SizedBox(height: 16),
                                           const LinearProgressIndicator(
-                                            value: 0.3,
+                                            value: 0.25,
                                             backgroundColor: Colors.grey,
                                             valueColor:
                                                 AlwaysStoppedAnimation<Color>(
@@ -372,7 +400,10 @@ class _PassengerListing3State extends State<PassengerListing3> {
                                 children: [
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        // Navigate to chats page
+                                        Navigator.pushNamed(context, '/passenger_chats');
+                                      },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: const Color(
                                           0xFFC5A216,
@@ -398,7 +429,7 @@ class _PassengerListing3State extends State<PassengerListing3> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () => _showBookingDialog(context),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.green,
                                         shape: RoundedRectangleBorder(
@@ -490,5 +521,79 @@ class _PassengerListing3State extends State<PassengerListing3> {
         ],
       ),
     );
+  }
+
+  // displays booking confirmation dialog
+  // allows passenger to confirm ride booking
+  void _showBookingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Booking'),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Driver: mike_wong_2001'),
+              Text('Route: Jurong East MRT, 10 Jurong East Street 12 → Nanyang Technological University'),
+              Text('Cost: S\$7.20'),
+              Text('Departure: 7:30AM'),
+            ],
+          ),
+          actions: [
+            // cancel booking button
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            // confirm booking button
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _confirmBooking();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF8C00),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // processes the ride booking confirmation
+  // shows success message and navigates to ride page
+  void _confirmBooking() {
+    // Create a proper Listing object for booking service
+    final listing = Listing(
+      id: 'listing_3',
+      driverName: 'mike_wong_2001',
+      pickupPoint: 'Jurong East MRT, 10 Jurong East Street 12',
+      destination: 'Nanyang Technological University, 50 Nanyang Ave, Singapore 639798',
+      departureTime: DateTime.now().add(const Duration(hours: 1, minutes: 30)), // 7:30AM approximation
+      cost: 7.20,
+      seats: 4,
+      availableSeats: 3,
+      carModel: 'Mazda 3',
+      licensePlate: 'SBC9876E',
+    );
+    
+    // Book the ride using booking service
+    _bookingService.bookRide(listing);
+    
+    // show booking success notification
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Ride booked successfully with mike_wong_2001!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+    
+    // navigate to ride tracking page
+    Navigator.pushNamed(context, '/passenger_ride');
   }
 } 

@@ -209,7 +209,9 @@ class PassengerHomePage extends StatelessWidget {
                             const Icon(Icons.chevron_right),
                           ],
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, '/passenger_chats');
+                        },
                       ),
                     ),
                     const SizedBox(height: 12),

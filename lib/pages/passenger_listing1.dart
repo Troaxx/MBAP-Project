@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/passenger_profile_drawer.dart';
+import '../models/listing.dart';
+import '../services/booking_service.dart';
 
 class PassengerViewListing extends StatefulWidget {
-  const PassengerViewListing();
+  final Listing listing;
+  
+  const PassengerViewListing({Key? key, required this.listing}) : super(key: key);
 
   @override
   State<PassengerViewListing> createState() => _PassengerViewListingState();
@@ -12,6 +16,9 @@ class PassengerViewListing extends StatefulWidget {
 class _PassengerViewListingState extends State<PassengerViewListing> {
   // Track expanded state
   bool _isExpanded = false;
+  
+  // booking service to manage ride bookings
+  final BookingService _bookingService = BookingService();
 
   // Toggle expansion
   void _toggleExpanded() {
@@ -42,13 +49,36 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'CarpoolSG',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Row(
+                            children: [
+                              // Back button
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.arrow_back,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                'CarpoolSG',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                           GestureDetector(
                             onTap: () {
@@ -93,10 +123,10 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
-                                          children: const [
+                                          children: [
                                             Text(
-                                              'abcdefuser123',
-                                              style: TextStyle(
+                                              widget.listing.driverName,
+                                              style: const TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -135,13 +165,13 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          'Random Address 123\nBlock 123',
-                                          style: TextStyle(fontSize: 14),
+                                        Text(
+                                          widget.listing.pickupPoint,
+                                          style: const TextStyle(fontSize: 14),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          '0.8km from you',
+                                          'Pickup location',
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: Colors.grey[600],
@@ -152,18 +182,18 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                   ),
                                   // Leave At Section
                                   Row(
-                                    children: const [
-                                      Text(
+                                    children: [
+                                      const Text(
                                         'LEAVE AT:',
                                         style: TextStyle(
                                           color: Color(0xFFFF8C00),
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                       Text(
-                                        '8:00AM',
-                                        style: TextStyle(
+                                        '${widget.listing.departureTime.hour.toString().padLeft(2, '0')}:${widget.listing.departureTime.minute.toString().padLeft(2, '0')}',
+                                        style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -194,13 +224,13 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          'Temasek Polytechnic\n21 Tampines Ave 1,\nSingapore 529757',
-                                          style: TextStyle(fontSize: 14),
+                                        Text(
+                                          widget.listing.destination,
+                                          style: const TextStyle(fontSize: 14),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          '3.2 km from you',
+                                          'Destination',
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: Colors.grey[600],
@@ -219,7 +249,7 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                   ),
                                   const SizedBox(height: 8),
                                   const Text(
-                                    '• 4.0 GPA if you can impress\n  me with your music choice',
+                                    '• Check driver profile for specific preferences',
                                     style: TextStyle(fontSize: 14),
                                   ),
                                 ],
@@ -298,22 +328,22 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                                 'Est. Duration',
                                                 '25 min',
                                               ),
-                                              _buildStatItem('Cost', '\$5.50'),
+                                              _buildStatItem('Cost', 'S\$${widget.listing.cost.toStringAsFixed(2)}'),
                                             ],
                                           ),
                                           const SizedBox(height: 16),
-                                          const LinearProgressIndicator(
-                                            value: 0.7,
+                                          LinearProgressIndicator(
+                                            value: (widget.listing.seats - widget.listing.availableSeats) / widget.listing.seats,
                                             backgroundColor: Colors.grey,
                                             valueColor:
-                                                AlwaysStoppedAnimation<Color>(
+                                                const AlwaysStoppedAnimation<Color>(
                                                   Color(0xFFFF8C00),
                                                 ),
                                           ),
                                           const SizedBox(height: 8),
-                                          const Text(
-                                            '3 seats out of 4 filled',
-                                            style: TextStyle(
+                                          Text(
+                                            '${widget.listing.seats - widget.listing.availableSeats} seats out of ${widget.listing.seats} filled',
+                                            style: const TextStyle(
                                               color: Colors.grey,
                                               fontSize: 12,
                                             ),
@@ -372,7 +402,10 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                 children: [
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        // Navigate to chats page
+                                        Navigator.pushNamed(context, '/passenger_chats');
+                                      },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: const Color(
                                           0xFFC5A216,
@@ -398,7 +431,7 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () => _showBookingDialog(context),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.green,
                                         shape: RoundedRectangleBorder(
@@ -490,5 +523,65 @@ class _PassengerViewListingState extends State<PassengerViewListing> {
         ],
       ),
     );
+  }
+
+  // displays booking confirmation dialog
+  // allows passenger to confirm ride booking
+  void _showBookingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Booking'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Driver: ${widget.listing.driverName}'),
+              Text('Route: ${widget.listing.pickupPoint} → ${widget.listing.destination}'),
+              Text('Cost: S\$${widget.listing.cost.toStringAsFixed(2)}'),
+              Text('Departure: ${widget.listing.departureTime.hour.toString().padLeft(2, '0')}:${widget.listing.departureTime.minute.toString().padLeft(2, '0')}'),
+            ],
+          ),
+          actions: [
+            // cancel booking button
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            // confirm booking button
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _confirmBooking();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF8C00),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // processes the ride booking confirmation
+  // shows success message and navigates to ride page
+  void _confirmBooking() {
+    // Book the ride using booking service
+    _bookingService.bookRide(widget.listing);
+    
+    // show booking success notification
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Ride booked successfully with ${widget.listing.driverName}!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+    
+    // navigate to ride tracking page
+    Navigator.pushNamed(context, '/passenger_ride');
   }
 }
