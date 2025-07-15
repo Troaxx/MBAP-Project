@@ -1,115 +1,153 @@
 import 'package:flutter/material.dart';
-import '../pages/driver_home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
-// profile drawer widget for passenger pages
-// provides navigation menu with ride history, role switching, and logout
-class ProfileDrawer extends StatelessWidget {
+// Simple profile drawer widget for passenger pages
+// Shows user info and navigation menu
+class ProfileDrawer extends StatefulWidget {
   const ProfileDrawer();
 
   @override
+  State<ProfileDrawer> createState() => _ProfileDrawerState();
+}
+
+class _ProfileDrawerState extends State<ProfileDrawer> {
+  String userName = 'User';
+  String userEmail = 'No email';
+  String userPhone = 'No phone';
+  StreamSubscription<User?>? _authStateSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+    // Listen to auth state changes to update the UI when user data changes
+    _authStateSubscription = FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      _loadUserData();
+    });
+  }
+
+  @override
+  void dispose() {
+    _authStateSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _loadUserData() async {
+    // Get current user info from Firebase Auth
+    final user = FirebaseAuth.instance.currentUser;
+    
+    // Check if user exists and get basic info
+    if (user != null) {
+      setState(() {
+        userName = user.displayName ?? 'User';
+        userEmail = user.email ?? 'No email';
+      });
+    }
+
+    // Load phone number from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    final phone = prefs.getString('user_phone');
+    
+    setState(() {
+      userPhone = phone ?? 'No phone';
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          // header section with profile info
+          // Header section with user profile
           DrawerHeader(
             decoration: const BoxDecoration(
-              color: Color(0xFFFF8C00), // orange theme
+              color: Color(0xFFFF8C00), // Orange theme color
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // profile avatar
+                // Profile picture (smaller circle with person icon)
                 const CircleAvatar(
-                  radius: 30,
+                  radius: 25,
                   backgroundColor: Colors.white,
                   child: Icon(
                     Icons.person,
-                    size: 40,
+                    size: 35,
                     color: Color(0xFFFF8C00),
                   ),
                 ),
-                const SizedBox(height: 10),
-                // passenger name (hardcoded for demo)
-                const Text(
-                  'Marie Tan',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                // phone number (hardcoded for demo)
-                const Text(
-                  '+65 91234567',
-                  style: TextStyle(
+                const SizedBox(height: 8),
+                
+                // User name (big and bold)
+                Text(
+                  userName,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 3),
+                
+                // User phone number
+                Text(
+                  userPhone,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 3),
+                
+                // User email (smaller text)
+                Text(
+                  userEmail,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
           
-          // functional menu items
+          // Menu items
           
-          // unfinished features - commented out for future development
-          
-          // profile editing feature - not implemented yet
-          // ListTile(
-          //   leading: const Icon(Icons.person),
-          //   title: const Text('My Profile'),
-          //   onTap: () {
-          //     Navigator.pop(context);
-          //     // TODO: implement profile editing functionality
-          //   },
-          // ),
-          
-          // ride history - links to passenger ride history page
+          // Ride History button
           ListTile(
             leading: const Icon(Icons.history),
             title: const Text('Ride History'),
             onTap: () {
-              Navigator.pop(context); // close drawer first
+              Navigator.pop(context); // Close drawer
               Navigator.pushNamed(context, '/passenger_ride_history');
             },
           ),
           
-          // settings feature - not implemented yet
-          // ListTile(
-          //   leading: const Icon(Icons.settings),
-          //   title: const Text('Settings'),
-          //   onTap: () {
-          //     Navigator.pop(context);
-          //     // TODO: implement settings functionality
-          //   },
-          // ),
-          
-          // role switching - allows passenger to switch to driver view
+          // Account Settings button
           ListTile(
-            leading: const Icon(Icons.swap_horiz),
-            title: const Text('Swap to Driver'),
+            leading: const Icon(Icons.settings),
+            title: const Text('Account Settings'),
             onTap: () {
-              Navigator.pop(context); // close drawer first
-              // navigate to driver home page
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const DriverHomePage()),
-              );
+              Navigator.pop(context); // Close drawer
+              Navigator.pushNamed(context, '/account_settings');
             },
           ),
           
-          const Divider(), // visual separator
+          const Divider(), // Line separator
           
-          // logout functionality - clears all navigation history
+          // Log Out button
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Log Out'),
             onTap: () {
-              // navigate to login and remove all previous routes
-              // prevents users from navigating back to authenticated screens
+              // Go to login screen and remove all previous screens
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 '/login',

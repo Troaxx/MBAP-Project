@@ -6,14 +6,21 @@ import '../models/listing.dart';
 
 // passenger ride page - shows current ride status or no booking message
 // displays active ride tracking or prompts to book from listings
-class PassengerRidePage extends StatefulWidget {
-  const PassengerRidePage();
+/// Passenger ride screen - displays active ride details.
+/// 
+/// This screen provides:
+/// - Real-time ride information and status
+/// - Driver and passenger details
+/// - Navigation and tracking features
+/// - Communication options
+class PassengerRideScreen extends StatefulWidget {
+  const PassengerRideScreen();
 
   @override
-  State<PassengerRidePage> createState() => _PassengerRidePageState();
+  State<PassengerRideScreen> createState() => _PassengerRideScreenState();
 }
 
-class _PassengerRidePageState extends State<PassengerRidePage> {
+class _PassengerRideScreenState extends State<PassengerRideScreen> {
   final BookingService _bookingService = BookingService();
 
   @override

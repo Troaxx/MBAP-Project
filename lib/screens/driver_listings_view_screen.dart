@@ -5,14 +5,21 @@ import '../widgets/driver_profile_drawer.dart';
 import '../models/listing.dart';
 import '../services/listing_service.dart';
 
-class DriverListingsView extends StatefulWidget {
-  const DriverListingsView();
+/// Driver listings view screen - displays driver's created listings.
+/// 
+/// This screen provides:
+/// - List of driver's created carpool listings
+/// - Edit and delete functionality for listings
+/// - Create new listing navigation
+/// - Status management for existing listings
+class DriverListingsViewScreen extends StatefulWidget {
+  const DriverListingsViewScreen();
 
   @override
-  State<DriverListingsView> createState() => _DriverListingsViewState();
+  State<DriverListingsViewScreen> createState() => _DriverListingsViewScreenState();
 }
 
-class _DriverListingsViewState extends State<DriverListingsView> {
+class _DriverListingsViewScreenState extends State<DriverListingsViewScreen> {
   final ListingService _listingService = ListingService();
   final String currentDriverName = 'David Tan'; // In a real app, this would come from auth
 

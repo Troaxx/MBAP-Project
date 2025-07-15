@@ -4,18 +4,25 @@ import '../widgets/passenger_profile_drawer.dart';
 import '../models/listing.dart';
 import '../services/listing_service.dart';
 import '../services/booking_service.dart';
-import 'passenger_listing1.dart';
+import 'passenger_listing1_screen.dart';
 
 // passenger listings view page - displays available carpool rides
 // shows list of available rides that passengers can book
-class PassengerListingsViewPage extends StatefulWidget {
-  const PassengerListingsViewPage();
+/// Passenger listings view screen - displays available carpool listings.
+/// 
+/// This screen provides:
+/// - List of available carpool rides
+/// - Search and filter functionality
+/// - Navigation to individual ride details
+/// - Booking capabilities
+class PassengerListingsViewScreen extends StatefulWidget {
+  const PassengerListingsViewScreen();
 
   @override
-  State<PassengerListingsViewPage> createState() => _PassengerListingsViewPageState();
+  State<PassengerListingsViewScreen> createState() => _PassengerListingsViewScreenState();
 }
 
-class _PassengerListingsViewPageState extends State<PassengerListingsViewPage> {
+class _PassengerListingsViewScreenState extends State<PassengerListingsViewScreen> {
   // service instance to fetch ride listings
   final ListingService _listingService = ListingService();
   
@@ -174,7 +181,7 @@ class _PassengerListingsViewPageState extends State<PassengerListingsViewPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PassengerViewListing(listing: listing),
+            builder: (context) => PassengerListing1Screen(listing: listing),
           ),
         );
       },

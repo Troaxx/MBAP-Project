@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/passenger_profile_drawer.dart';
 
-// passenger ride history page - displays past rides and trip details
-// shows completed trips, payment history, and ride experiences for passengers
-class PassengerRideHistoryPage extends StatelessWidget {
-  const PassengerRideHistoryPage();
+/// Passenger ride history screen - displays past rides for the passenger.
+/// 
+/// This screen provides:
+/// - List of completed and cancelled rides
+/// - Details for each ride
+/// - Navigation to ride details or rebook
+class PassengerRideHistoryScreen extends StatelessWidget {
+  const PassengerRideHistoryScreen();
 
   @override
   Widget build(BuildContext context) {

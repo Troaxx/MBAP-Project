@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../widgets/passenger_profile_drawer.dart';
+import '../widgets/driver_bottom_nav_bar.dart';
+import '../widgets/driver_profile_drawer.dart';
 
-// passenger activity page - displays ride activity and payment transactions
-// shows recent rides, payment history, and activity timeline for passengers
-class PassengerActivityPage extends StatelessWidget {
-  const PassengerActivityPage();
+/// Driver history screen - displays past rides for the driver.
+/// 
+/// This screen provides:
+/// - List of completed and cancelled rides
+/// - Details for each ride
+class DriverHistoryScreen extends StatelessWidget {
+  const DriverHistoryScreen();
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +19,10 @@ class PassengerActivityPage extends StatelessWidget {
       key: scaffoldKey,
       backgroundColor: const Color(0xFFFF8C00), // orange background theme
       // side drawer for profile menu
-      endDrawer: ProfileDrawer(),
+      endDrawer: DriverProfileDrawer(),
       body: Column(
         children: [
-          // main content area with activity feed
+          // main content area with history data
           Expanded(
             child: SafeArea(
               child: Padding(
@@ -36,7 +39,7 @@ class PassengerActivityPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'CarpoolSG',
+                              'CarpoolSG (Driver)',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -44,7 +47,7 @@ class PassengerActivityPage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Your activity',
+                              'Your driving history',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
@@ -74,13 +77,77 @@ class PassengerActivityPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     
-                    // scrollable activity feed with rides and payments
+                    // earnings summary card - displays total earnings and ride count
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          // earnings icon with light green background
+                          CircleAvatar(
+                            radius: 25,
+                            backgroundColor: const Color(0x1A4CAF50),
+                            child: const Icon(
+                              Icons.account_balance_wallet,
+                              color: Colors.green,
+                              size: 30,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          // earnings details and statistics
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Total Earnings',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                // main earnings amount in green
+                                const Text(
+                                  'S\$127.50',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                // additional statistics
+                                Text(
+                                  'From 15 completed rides',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    // scrollable history list with rides and payments
                     Expanded(
                       child: ListView(
                         children: [
-                          // recent activity section header
+                          // recent rides section header
                           const Text(
-                            'Recent Activity',
+                            'Recent Rides',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -88,30 +155,41 @@ class PassengerActivityPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          
-                          // ride activity cards showing trip details
-                          _buildRideActivityCard(
+                          // individual ride cards showing trip details and earnings
+                          _buildDriverRideCard(
                             context,
-                            driverName: 'John Tan',
+                            passengerName: 'Marie Tan',
                             route: 'Tampines Hub → Temasek Polytechnic',
                             date: 'Oct 15, 2024',
                             time: '8:00 AM',
-                            status: 'Completed',
+                            earnings: 'S\$11.00',
+                            passengers: 2,
                           ),
                           const SizedBox(height: 12),
-                          _buildRideActivityCard(
+                          _buildDriverRideCard(
                             context,
-                            driverName: 'Sarah Lim',
+                            passengerName: 'John Lim',
                             route: 'Bedok Mall → Singapore Polytechnic',
                             date: 'Oct 14, 2024',
                             time: '7:45 AM',
-                            status: 'Completed',
+                            earnings: 'S\$12.00',
+                            passengers: 2,
+                          ),
+                          const SizedBox(height: 12),
+                          _buildDriverRideCard(
+                            context,
+                            passengerName: 'Sarah Wong',
+                            route: 'Jurong East → NTU',
+                            date: 'Oct 13, 2024',
+                            time: '7:30 AM',
+                            earnings: 'S\$21.60',
+                            passengers: 3,
                           ),
                           const SizedBox(height: 20),
                           
-                          // payment activity section header
+                          // payment history section header
                           const Text(
-                            'Payment Activity',
+                            'Payment History',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -119,36 +197,35 @@ class PassengerActivityPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          
-                          // payment activity cards showing transaction details
-                          _buildPaymentActivityCard(
+                          // individual payment cards showing transaction details
+                          _buildDriverPaymentCard(
                             context,
-                            transactionId: 'TXN-3451',
-                            description: 'Ride payment',
+                            paymentId: 'DRV-3451',
+                            description: 'Ride earnings payout',
                             route: 'Tampines Hub → Temasek Polytechnic',
                             date: 'Oct 15, 2024',
-                            amount: 'S\$5.50',
+                            amount: 'S\$11.00',
                             status: 'Completed',
                           ),
                           const SizedBox(height: 12),
-                          _buildPaymentActivityCard(
+                          _buildDriverPaymentCard(
                             context,
-                            transactionId: 'TXN-3420',
-                            description: 'Ride payment',
+                            paymentId: 'DRV-3420',
+                            description: 'Ride earnings payout',
                             route: 'Bedok Mall → Singapore Polytechnic',
                             date: 'Oct 14, 2024',
-                            amount: 'S\$6.00',
+                            amount: 'S\$12.00',
                             status: 'Completed',
                           ),
                           const SizedBox(height: 12),
-                          _buildPaymentActivityCard(
+                          _buildDriverPaymentCard(
                             context,
-                            transactionId: 'TXN-3398',
-                            description: 'Ride payment',
+                            paymentId: 'DRV-3398',
+                            description: 'Ride earnings payout',
                             route: 'Jurong East → NTU',
                             date: 'Oct 13, 2024',
-                            amount: 'S\$7.20',
-                            status: 'Refunded',
+                            amount: 'S\$21.60',
+                            status: 'Completed',
                           ),
                         ],
                       ),
@@ -168,22 +245,23 @@ class PassengerActivityPage extends StatelessWidget {
                 topRight: Radius.circular(30),
               ),
             ),
-            child: const BottomNavBar(currentIndex: 4), // highlight activity tab
+            child: const DriverBottomNavBar(currentIndex: 4), // highlight history tab
           ),
         ],
       ),
     );
   }
 
-  // helper widget to create ride activity cards
-  // displays individual ride activities with trip details and status
-  Widget _buildRideActivityCard(
+  // helper widget to create ride history cards
+  // displays individual completed ride details with passenger info and earnings
+  Widget _buildDriverRideCard(
     BuildContext context, {
-    required String driverName,
+    required String passengerName,
     required String route,
     required String date,
     required String time,
-    required String status,
+    required String earnings,
+    required int passengers,
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -200,24 +278,24 @@ class PassengerActivityPage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // activity icon with orange background
+          // ride icon with orange background
           const CircleAvatar(
             radius: 20,
             backgroundColor: Color(0xFFFF8C00),
             child: Icon(
-              Icons.directions_car,
+              Icons.drive_eta,
               color: Colors.white,
               size: 20,
             ),
           ),
           const SizedBox(width: 12),
-          // activity details - trip information
+          // ride details - passenger and route information
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Ride with $driverName',
+                  'Passenger: $passengerName',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -242,43 +320,46 @@ class PassengerActivityPage extends StatelessWidget {
               ],
             ),
           ),
-          // status badge with color-coded background
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0x1A4CAF50), // modern green background
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              status,
-              style: const TextStyle(
-                color: Colors.green,
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
+          // earnings and passenger count
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                earnings,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                  fontSize: 16,
+                ),
               ),
-            ),
+              const SizedBox(height: 4),
+              Text(
+                '$passengers passenger${passengers > 1 ? 's' : ''}',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  // helper widget to create payment activity cards
-  // displays individual payment transactions with amount and status
-  Widget _buildPaymentActivityCard(
+  // helper widget to create payment history cards
+  // displays individual payment transaction details with status
+  Widget _buildDriverPaymentCard(
     BuildContext context, {
-    required String transactionId,
+    required String paymentId,
     required String description,
     required String route,
     required String date,
     required String amount,
     required String status,
   }) {
-    // determine colors based on payment status
+    // determine status color based on payment status
     Color statusColor = status == 'Completed' ? Colors.green : Colors.orange;
-    Color backgroundColor = status == 'Completed' 
-      ? const Color(0x1A4CAF50) // modern green background
-      : const Color(0x1AFF9800); // modern orange background
     
     return Container(
       padding: const EdgeInsets.all(16),
@@ -298,21 +379,21 @@ class PassengerActivityPage extends StatelessWidget {
           // payment icon with status-colored background
           CircleAvatar(
             radius: 20,
-            backgroundColor: backgroundColor,
-            child: Icon(
+            backgroundColor: const Color(0x1A4CAF50),
+            child: const Icon(
               Icons.payment,
-              color: statusColor,
+              color: Colors.green,
               size: 20,
             ),
           ),
           const SizedBox(width: 12),
-          // payment details - transaction information
+          // payment details - transaction info and route
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  transactionId,
+                  paymentId,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -345,26 +426,26 @@ class PassengerActivityPage extends StatelessWidget {
               ],
             ),
           ),
-          // amount and status display
+          // payment amount and status
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 amount,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: statusColor,
+                  color: Colors.green,
                   fontSize: 16,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 8,
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: backgroundColor,
+                  color: const Color(0x1A4CAF50),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(

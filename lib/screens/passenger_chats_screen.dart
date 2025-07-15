@@ -3,16 +3,19 @@ import '../widgets/bottom_nav_bar.dart';
 import '../widgets/passenger_profile_drawer.dart';
 import '../services/booking_service.dart';
 
-// passenger chats page - messaging interface with drivers
-// displays chat conversations and messaging functionality
-class PassengerChatsPage extends StatefulWidget {
-  const PassengerChatsPage();
+/// Passenger chats screen - displays chat conversations for the passenger.
+/// 
+/// This screen provides:
+/// - List of chat threads with drivers
+/// - Navigation to individual chat details
+class PassengerChatsScreen extends StatefulWidget {
+  const PassengerChatsScreen();
 
   @override
-  State<PassengerChatsPage> createState() => _PassengerChatsPageState();
+  State<PassengerChatsScreen> createState() => _PassengerChatsScreenState();
 }
 
-class _PassengerChatsPageState extends State<PassengerChatsPage> {
+class _PassengerChatsScreenState extends State<PassengerChatsScreen> {
   final BookingService _bookingService = BookingService();
   final TextEditingController _messageController = TextEditingController();
   

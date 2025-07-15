@@ -1,58 +1,73 @@
 import 'package:flutter/material.dart';
-import '../widgets/driver_bottom_nav_bar.dart';
-import '../widgets/driver_profile_drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+import '../widgets/bottom_nav_bar.dart';
+import '../widgets/passenger_profile_drawer.dart';
+import 'rebook_sample_screen.dart';
 
-class DriverHomePage extends StatefulWidget {
-  const DriverHomePage();
+/// Passenger home screen - main dashboard for passengers.
+/// 
+/// This screen provides:
+/// - Quick access to search for rides
+/// - View ride history and active bookings
+/// - Navigation to chats and profile
+/// - Bottom navigation for main passenger features
+class PassengerHomeScreen extends StatefulWidget {
+  const PassengerHomeScreen();
 
   @override
-  State<DriverHomePage> createState() => _DriverHomePageState();
+  State<PassengerHomeScreen> createState() => _PassengerHomeScreenState();
 }
 
-class _DriverHomePageState extends State<DriverHomePage> {
-  bool isAvailable = true;
+class _PassengerHomeScreenState extends State<PassengerHomeScreen> {
+  String _userName = 'User';
+  StreamSubscription<User?>? _authStateSubscription;
 
-  void _showAvailabilityConfirmationDialog() {
-    final String message = isAvailable
-        ? 'Are you sure you want to change to unavailable? This means you cannot accept any rides until you change the status back to available.'
-        : 'Are you sure you want to change to available? Turning this on means you are available to accept rides.';
+  @override
+  void initState() {
+    super.initState();
+    _updateUserName();
+    // Listen to auth state changes to update the UI when user data changes
+    _authStateSubscription = FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      _updateUserName();
+    });
+  }
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirm Status Change'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Yes'),
-              onPressed: () {
-                setState(() {
-                  isAvailable = !isAvailable;
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  @override
+  void dispose() {
+    _authStateSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _updateUserName() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Use display name if available, otherwise use email
+      if (user.displayName != null && user.displayName!.isNotEmpty) {
+        setState(() {
+          _userName = user.displayName!;
+        });
+      } else if (user.email != null) {
+        setState(() {
+          _userName = user.email!;
+        });
+      }
+    }
+  }
+
+  /// Get the user's display name or email as fallback
+  String _getUserName() {
+    return _userName;
   }
 
   @override
   Widget build(BuildContext context) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
-
+    
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: const Color(0xFFFF8C00),
-      endDrawer: DriverProfileDrawer(),
+      endDrawer: ProfileDrawer(),
       body: Column(
         children: [
           Expanded(
@@ -66,11 +81,11 @@ class _DriverHomePageState extends State<DriverHomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'CarpoolSG (Driver)',
+                            const Text(
+                              'CarpoolSG',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -78,15 +93,15 @@ class _DriverHomePageState extends State<DriverHomePage> {
                               ),
                             ),
                             Text(
-                              'Hey, David Tan.',
-                              style: TextStyle(
+                              'Hey, ${_getUserName()}.',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            Text(
-                              'Who are we picking up today?',
+                            const Text(
+                              'Where should we go today?',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -151,7 +166,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    // driver status card
+                    // Last Trip Card
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -163,39 +178,42 @@ class _DriverHomePageState extends State<DriverHomePage> {
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Driver Status',
+                            children: const [
+                              Text(
+                                'Your Last Trip',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
                               ),
                               Text(
-                                isAvailable ? 'Available' : 'Unavailable',
+                                'Temasek Polytechnic',
                                 style: TextStyle(
-                                  color: isAvailable ? Colors.green : Colors.red,
+                                  color: Colors.grey,
                                   fontSize: 14,
                                 ),
                               ),
                             ],
                           ),
                           ElevatedButton(
-                            onPressed: _showAvailabilityConfirmationDialog,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RebookSampleScreen(),
+                                ),
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.grey[200],
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
                             ),
-                            child: Text(
-                              isAvailable 
-                                  ? 'Change to unavailable' 
-                                  : 'Change to available',
+                            child: const Text(
+                              'Rebook',
                               style: TextStyle(
-                                color: isAvailable 
-                                    ? const Color.fromARGB(255, 255, 34, 0)
-                                    : const Color(0xFF4CAF50),
+                                color: Color(0xFFFF8C00),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -212,34 +230,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                       ),
                       child: ListTile(
                         title: const Text(
-                          'Create a Listing',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                          ),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.post_add),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.chevron_right)
-                          ],
-                        ),
-                        onTap: () {
-                          Navigator.pushNamed(context, '/driver_create_listing');
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ListTile(
-                        title: const Text(
-                          'My Listings',
+                          'View Listings',
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
@@ -254,7 +245,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                           ],
                         ),
                         onTap: () {
-                          Navigator.pushNamed(context, '/driver_listings');
+                          Navigator.pushNamed(context, '/passenger_listings');
                         },
                       ),
                     ),
@@ -281,7 +272,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                           ],
                         ),
                         onTap: () {
-                          Navigator.pushNamed(context, '/driver_chats');
+                          Navigator.pushNamed(context, '/passenger_chats');
                         },
                       ),
                     ),
@@ -308,7 +299,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                           ],
                         ),
                         onTap: () {
-                          Navigator.pushNamed(context, '/driver_history');
+                          Navigator.pushNamed(context, '/passenger_ride_history');
                         },
                       ),
                     ),
@@ -328,7 +319,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                 topRight: Radius.circular(30),
               ),
             ),
-            child: const DriverBottomNavBar(currentIndex: 0),
+            child: const BottomNavBar(currentIndex: 0),
           ),
         ],
       ),

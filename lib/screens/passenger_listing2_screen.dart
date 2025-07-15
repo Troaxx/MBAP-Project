@@ -4,14 +4,19 @@ import '../widgets/passenger_profile_drawer.dart';
 import '../models/listing.dart';
 import '../services/booking_service.dart';
 
-class PassengerListing2 extends StatefulWidget {
-  const PassengerListing2();
+/// Passenger listing 2 screen - displays details for a specific carpool listing.
+/// 
+/// This screen provides:
+/// - Listing details (driver, route, cost, etc.)
+/// - Booking and chat options
+class PassengerListing2Screen extends StatefulWidget {
+  const PassengerListing2Screen();
 
   @override
-  State<PassengerListing2> createState() => _PassengerListing2State();
+  State<PassengerListing2Screen> createState() => _PassengerListing2State();
 }
 
-class _PassengerListing2State extends State<PassengerListing2> {
+class _PassengerListing2State extends State<PassengerListing2Screen> {
   // Track expanded state
   bool _isExpanded = false;
   

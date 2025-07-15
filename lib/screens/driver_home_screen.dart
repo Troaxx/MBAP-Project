@@ -1,18 +1,106 @@
 import 'package:flutter/material.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../widgets/passenger_profile_drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+import '../widgets/driver_bottom_nav_bar.dart';
+import '../widgets/driver_profile_drawer.dart';
 
-class PassengerHomePage extends StatelessWidget {
-  const PassengerHomePage();
+/// Driver home screen - main dashboard for drivers.
+/// 
+/// This screen provides:
+/// - Quick access to create new listings
+/// - View active listings and bookings
+/// - Navigation to chats and profile
+/// - Bottom navigation for main driver features
+class DriverHomeScreen extends StatefulWidget {
+  const DriverHomeScreen();
+
+  @override
+  State<DriverHomeScreen> createState() => _DriverHomeScreenState();
+}
+
+class _DriverHomeScreenState extends State<DriverHomeScreen> {
+  bool isAvailable = true;
+  String _userName = 'User';
+  StreamSubscription<User?>? _authStateSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateUserName();
+    // Listen to auth state changes to update the UI when user data changes
+    _authStateSubscription = FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      _updateUserName();
+    });
+  }
+
+  @override
+  void dispose() {
+    _authStateSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _updateUserName() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Use display name if available, otherwise use email
+      if (user.displayName != null && user.displayName!.isNotEmpty) {
+        setState(() {
+          _userName = user.displayName!;
+        });
+      } else if (user.email != null) {
+        setState(() {
+          _userName = user.email!;
+        });
+      }
+    }
+  }
+
+  /// Get the user's display name or email as fallback
+  String _getUserName() {
+    return _userName;
+  }
+
+  void _showAvailabilityConfirmationDialog() {
+    final String message = isAvailable
+        ? 'Are you sure you want to change to unavailable? This means you cannot accept any rides until you change the status back to available.'
+        : 'Are you sure you want to change to available? Turning this on means you are available to accept rides.';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Status Change'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () {
+                setState(() {
+                  isAvailable = !isAvailable;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
-    
+
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: const Color(0xFFFF8C00),
-      endDrawer: ProfileDrawer(),
+      endDrawer: DriverProfileDrawer(),
       body: Column(
         children: [
           Expanded(
@@ -26,11 +114,11 @@ class PassengerHomePage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'CarpoolSG',
+                            const Text(
+                              'CarpoolSG (Driver)',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -38,15 +126,15 @@ class PassengerHomePage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Hey, Marie Tan.',
-                              style: TextStyle(
+                              'Hey, ${_getUserName()}.',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                             const Text(
-                              'Where should we go today?',
+                              'Who are we picking up today?',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -111,7 +199,7 @@ class PassengerHomePage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    // Last Trip Card
+                    // driver status card
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -123,35 +211,39 @@ class PassengerHomePage extends StatelessWidget {
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'Your Last Trip',
+                            children: [
+                              const Text(
+                                'Driver Status',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
                               ),
                               Text(
-                                'Temasek Polytechnic',
+                                isAvailable ? 'Available' : 'Unavailable',
                                 style: TextStyle(
-                                  color: Colors.grey,
+                                  color: isAvailable ? Colors.green : Colors.red,
                                   fontSize: 14,
                                 ),
                               ),
                             ],
                           ),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: _showAvailabilityConfirmationDialog,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.grey[200],
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
                             ),
-                            child: const Text(
-                              'Rebook',
+                            child: Text(
+                              isAvailable 
+                                  ? 'Change to unavailable' 
+                                  : 'Change to available',
                               style: TextStyle(
-                                color: Color(0xFFFF8C00),
+                                color: isAvailable 
+                                    ? const Color.fromARGB(255, 255, 34, 0)
+                                    : const Color(0xFF4CAF50),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -168,7 +260,34 @@ class PassengerHomePage extends StatelessWidget {
                       ),
                       child: ListTile(
                         title: const Text(
-                          'View Listings',
+                          'Create a Listing',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.post_add),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.chevron_right)
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/driver_create_listing');
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        title: const Text(
+                          'My Listings',
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
@@ -183,7 +302,7 @@ class PassengerHomePage extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          Navigator.pushNamed(context, '/passenger_listings');
+                          Navigator.pushNamed(context, '/driver_listings');
                         },
                       ),
                     ),
@@ -210,7 +329,7 @@ class PassengerHomePage extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          Navigator.pushNamed(context, '/passenger_chats');
+                          Navigator.pushNamed(context, '/driver_chats');
                         },
                       ),
                     ),
@@ -237,7 +356,7 @@ class PassengerHomePage extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          Navigator.pushNamed(context, '/passenger_ride_history');
+                          Navigator.pushNamed(context, '/driver_history');
                         },
                       ),
                     ),
@@ -257,7 +376,7 @@ class PassengerHomePage extends StatelessWidget {
                 topRight: Radius.circular(30),
               ),
             ),
-            child: const BottomNavBar(currentIndex: 0),
+            child: const DriverBottomNavBar(currentIndex: 0),
           ),
         ],
       ),

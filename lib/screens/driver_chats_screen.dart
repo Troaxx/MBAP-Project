@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import '../widgets/driver_bottom_nav_bar.dart';
 import '../widgets/driver_profile_drawer.dart';
 
-// driver chats page - messaging interface with passengers
-// displays chat conversations with past and current passengers
-class DriverChatsPage extends StatefulWidget {
-  const DriverChatsPage();
+/// Driver chats screen - displays chat conversations for the driver.
+/// 
+/// This screen provides:
+/// - List of chat threads with passengers
+/// - Navigation to individual chat details
+class DriverChatsScreen extends StatefulWidget {
+  const DriverChatsScreen();
 
   @override
-  State<DriverChatsPage> createState() => _DriverChatsPageState();
+  State<DriverChatsScreen> createState() => _DriverChatsScreenState();
 }
 
-class _DriverChatsPageState extends State<DriverChatsPage> {
+class _DriverChatsScreenState extends State<DriverChatsScreen> {
   // hardcoded chat conversations with passengers from ride history
   final List<ChatConversation> _conversations = [
     ChatConversation(
@@ -325,7 +328,7 @@ class _DriverChatsPageState extends State<DriverChatsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DriverChatDetailPage(conversation: conversation),
+        builder: (context) => DriverChatDetailScreen(conversation: conversation),
       ),
     );
   }
@@ -349,17 +352,17 @@ class _DriverChatsPageState extends State<DriverChatsPage> {
   }
 }
 
-// detailed chat page for individual conversations
-class DriverChatDetailPage extends StatefulWidget {
+/// Driver chat detail screen - displays a single chat thread.
+class DriverChatDetailScreen extends StatefulWidget {
   final ChatConversation conversation;
 
-  const DriverChatDetailPage({required this.conversation});
+  const DriverChatDetailScreen({required this.conversation});
 
   @override
-  State<DriverChatDetailPage> createState() => _DriverChatDetailPageState();
+  State<DriverChatDetailScreen> createState() => _DriverChatDetailScreenState();
 }
 
-class _DriverChatDetailPageState extends State<DriverChatDetailPage> {
+class _DriverChatDetailScreenState extends State<DriverChatDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
   late List<ChatMessage> _messages;
 

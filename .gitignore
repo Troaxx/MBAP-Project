@@ -23,6 +23,27 @@ migrate_working_dir/
 # is commented out by default.
 #.vscode/
 
+# Firebase & Security - CRITICAL: These contain sensitive API keys and credentials
+firebase_options.dart
+lib/firebase_options.dart
+**/firebase_options.dart
+google-services.json
+GoogleService-Info.plist
+.env
+.env.local
+.env.production
+.env.staging
+*.p8
+*.p12
+*.key
+*.pem
+*.jks
+*.keystore
+key.properties
+android/key.properties
+ios/Runner/GoogleService-Info.plist
+android/app/google-services.json
+
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
@@ -43,3 +64,29 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Additional Flutter security
+coverage/
+.nyc_output/
+.coverage
+.coverage.*
+lcov.info
+
+# macOS specific
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/App.framework/
+**/ios/Flutter/Flutter.framework/
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Windows specific
+**/windows/flutter/generated_plugin_registrant.cc
+**/windows/flutter/generated_plugin_registrant.h
+
+# Linux specific
+**/linux/flutter/generated_plugin_registrant.cc
+**/linux/flutter/generated_plugin_registrant.h

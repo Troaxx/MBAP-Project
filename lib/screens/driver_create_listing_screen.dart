@@ -7,14 +7,21 @@ import '../services/listing_service.dart';
 
 // main page for drivers to create new carpool listings
 // uses stateful widget to manage form data and user interactions
-class DriverCreateListing extends StatefulWidget {
-  const DriverCreateListing();
+/// Driver create listing screen - form for creating new carpool listings.
+/// 
+/// This screen provides:
+/// - Form for entering ride details (pickup, destination, cost, etc.)
+/// - Validation for required fields
+/// - Date and time picker for departure
+/// - Navigation back to listings view
+class DriverCreateListingScreen extends StatefulWidget {
+  const DriverCreateListingScreen();
 
   @override
-  State<DriverCreateListing> createState() => _DriverCreateListingState();
+  State<DriverCreateListingScreen> createState() => _DriverCreateListingScreenState();
 }
 
-class _DriverCreateListingState extends State<DriverCreateListing> {
+class _DriverCreateListingScreenState extends State<DriverCreateListingScreen> {
   // form key to validate all form fields at once
   var form = GlobalKey<FormState>();
 
